@@ -1,0 +1,21 @@
+Step 1 
+
+http://localhost:8080/cnapws/user/fetchadvertisernetwork?accountId=100001
+
+http://localhost:8080/cnaptp/fb/createcampaign
+{"userId":"advertiser@adtech.com","accessToken":"48e2d802-2679-4c24-91ca-b7b684bb76a41505712603043","userNetworkMapId":300001,"networkAdAccountId":"101870703634673","campaignName":"BYP1","objective":"POST_ENGAGEMENT","campaignStatus":"PAUSED"}
+
+http://localhost:8080/cnaptp/fb/getcampaignbycampaignid?campaignId=23842686864850109&userNetworkMapId=300001
+
+http://localhost:8080/cnaptp/fb/savecampaigndata
+{"userId":"advertiser@adtech.com","accessToken":"48e2d802-2679-4c24-91ca-b7b684bb76a41505712603043","userNetworkMapId":"300001","parentCampaignId":"5000630","adAccountId":"101870703634673","campaignId":"23842686864850109","campaignDetails":{"id":"23842686864850109","account_id":"101870703634673","buying_type":"AUCTION","can_use_spend_cap":true,"configured_status":"PAUSED","created_time":"2017-09-18T11:18:10+0530","effective_status":"PAUSED","name":"BYP1","objective":"POST_ENGAGEMENT","spend_cap":"5000000","start_time":"2017-09-18T11:18:10+0530","status":"PAUSED","updated_time":"2017-09-18T11:18:10+0530"}}
+
+
+step 2
+Language FB service 
+http://localhost:8080/cnaptp/fb/demographictargetingsearch?type=adlocale&q=tur&userNetworkMapId=300001
+
+
+
+Location FB Service 
+https://graph.facebook.com/v2.9/search?type=adgeolocation&q=ita&access_token=

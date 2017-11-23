@@ -1,0 +1,3427 @@
+	dashboard.controller("HomeController", ['$rootScope', '$scope', '$state', 'catalyst', '$location', 'accountDashBoardGetPost', 'Flash', '$window', '$http', '$filter', '$compile', 'appSettings', 'globalData', 'apiService', '$q', 'sharedService', '$timeout', 'netWorkData',
+    function ($rootScope, $scope, $state, catalyst, $location, accountDashBoardGetPost, Flash, $window, $http, $filter, $compile, appSettings, globalData, apiService, $q, sharedService, $timeout, netWorkData) {
+
+        var baseUrl = catalyst.serviceUrl1;
+        var baseUrl2 = catalyst.serviceUrl2;
+        var apiTPBase = appSettings.apiTPBase;
+        var apiBase = appSettings.apiBase;
+		var apiTwitterBase = appSettings.apiTwitterBase;
+        $scope.parentCamp=[];
+        var vm = this;
+		$scope.childPopupFlag = [];
+        vm.showDetails = true;
+        sharedService.store = $scope;
+        $scope.compaignNo = 0;
+		$scope.tabPopupFlag=[];
+        $scope.cNo = 1;
+        $scope.arr = [];
+        $scope._flgNo = 0;
+        $scope.flag = [];
+        $scope.popover = [];
+        $scope.tabFlag = false;
+        $scope.facebookFlag = false;
+        $scope.openPopupFlag = false;
+        $scope.parentCompaign = [];
+        $scope.campaignFlag = false;
+        $scope.selectedTab = 1;
+        $scope.selectedMenu = 3;
+        $scope.isEmpty = false;
+        $scope.isDisabled = true;
+        $scope.compaignContent = [];
+        $scope.loader = false;
+        $scope.popupMessage = "";
+        $scope.popupTitle = "";
+        $scope.accountName = "";
+        $scope.editSelectedItem = 0;
+        $scope.toggle = false;
+        $scope.lastScrollTop = 0;
+        $scope.direction = "";
+        $scope.iconVal = "&#xf013;"
+        $scope.isChildCampaign = true;
+        $scope.parentCampaignName = ""
+        $scope.deleteDraft = false;
+        $scope.failure_deletedraft_campaign_networkerror = false;
+        $scope.editAdsetErrorMsg = 'none';
+		$scope.networkNames = "";
+		$scope.cretOption = "";
+				
+        $scope.imagePath = ""
+        $scope.imgEditPath = "images/accountDashboard/edit.svg";
+        $scope.imgDraftPath = "images/accountDashboard/edit.svg";
+        $scope.userId = $window.localStorage.getItem("userId");
+        $scope.accessToken = $window.localStorage.getItem("accessToken");
+        var queryStr = ""; //
+        var advertiserId = 0; //.
+        $scope.draft_campaign_confirm = false;
+        $scope.parentCampaignsArray = []
+        $scope.advertiserLogoUrl = "";
+        $scope.currentSpend = "0";
+        $scope.objectFromGetAd = {};
+        $scope.objectFromGetAdSet = {};
+        $scope.campaign_confirm = false;
+        $scope.toggleShow = false;
+		$scope.parentCampaignName = "";
+		$scope.selectedNetwork = "Facebook";
+		$scope.editFlag = true;
+        $scope.closePopupDetails = function () {
+            $scope.editAdsetErrorMsg = "none";
+        }
+        $scope.selectedIndex = 1;
+		var today = new Date();
+		var dd = today.getDate()<10 ?  "0"+(today.getDate()) : today.getDate();
+		var mm = today.getMonth()+1<10 ?  "0"+(today.getMonth()+1) : today.getMonth()+1;
+		var yyyy = today.getFullYear();
+        $scope.scroll = function (event) {
+			event.stopPropagation();
+			var eid = event.target.id;
+			console.log("eid"+eid);
+			var pcpos = angular.element("#"+eid).offset().top;
+			var childContent = $(".apply-offset");
+			var parContent = $(".apply-height");
+			parContent.css('height', pcpos - 60);
+			var padTop = (pcpos - 191) < 0 ? 0 : (pcpos - 191);
+			childContent.css('padding-top', padTop);
+		};
+        //Search with ParentCampaign Name
+        $scope.searchBy = function (item) {
+            //console.log(item);
+            if ($scope.searchText == undefined) {
+                return true;
+            } else {
+                if (item.parentCampaignName.toLowerCase().indexOf($scope.searchText.toLowerCase()) != -1) {
+                    return true;
+                }
+            }
+           return false;
+        };
+        //Search with ParentCampaign Name
+			var video = document.createElement("video");
+				var thumbs = document.getElementById("thumbs");
+				var img = document.createElement("img");
+        $scope.openRules = function(){
+			var url = "https://10.142.153.36:8080/CNAP_UI_BRE_demo/indexFinal.html?userId="+$window.localStorage.getItem("userId")+"&accessToken="+$window.localStorage.getItem("accessToken");
+			//window.open(url);
+				var i = 0;
+			
+
+				video.addEventListener('loadeddata', function() {
+					//thumbs.innerHTML = "";
+					video.currentTime = i;
+				}, false);
+
+				video.addEventListener('seeked', function() {
+					// now video has seeked and current frames will show
+					// at the time as we expect
+					generateThumbnail(i);
+					// when frame is captured, increase
+					i++;
+
+					// if we are not passed end, seek to next interval
+					if (i <= video.duration) {
+						// this will trigger another seeked event
+						video.currentTime = i;
+					}
+					else {
+						// DONE!, next action
+						alert("done!")
+					}
+
+				}, false);
+
+				video.preload = "auto";
+				video.src = "https://media.w3.org/2010/05/sintel/trailer.mp4";
+
+		}
+			
+		function generateThumbnail() {
+		 /*  var c = document.createElement("canvas");
+		  var ctx = c.getContext("2d");
+		  c.width = 160;
+		  c.height = 90;
+		  ctx.drawImage(video, 0, 0, 160, 90);
+		 // var dataURL = c.toDataURL();
+		 // console.log(dataURL);
+		  thumbs.appendChild(c);
+		  thumbs.onclick = function(event){
+			  console.log(event);
+		  }  */
+		 
+			  var c = document.createElement("canvas");
+			  var ctx = c.getContext("2d");
+			  c.width = 160;
+			  c.height = 90;
+			  ctx.drawImage(video, 0, 0, 160, 90);
+			  var dataURL = c.toDataURL();
+			  $timeout( function(){
+			  $scope.wallMainImage = dataURL;
+				console.log('asdfsdf')
+			  }, 200);
+		   
+		
+		}
+		
+        $scope.getData = function () {
+           
+            $rootScope.progressLoader = "block";
+            var uId = $window.localStorage.getItem("userId");
+			var planEndDate1 = $window.localStorage.getItem("planEndDate");
+			var  planEndDate = planEndDate1 != null ? planEndDate1.split("-") : "";	
+			if(planEndDate == "" || planEndDate == undefined || planEndDate == null){
+				$rootScope.noEdit = true;
+				$scope.adminUserRole = true;
+				$scope.editCampaign = "View Campaign";
+			}else if (($window.localStorage.getItem("role") == 'Account') || (parseInt(yyyy+""+mm+""+dd) >= (parseInt(planEndDate[2]+""+planEndDate[1]+""+planEndDate[0])))){
+				$rootScope.noEdit = true;
+				$scope.adminUserRole = true;
+				$scope.editCampaign = "View Campaign";
+			}else if (($window.localStorage.getItem("role") != 'Account') && (parseInt(yyyy+""+mm+""+dd) < (parseInt(planEndDate[2]+""+planEndDate[1]+""+planEndDate[0])))){
+				$rootScope.noEdit = false;
+				$scope.adminUserRole = false;
+				$scope.editCampaign = "Edit Campaign";
+			}  
+
+            queryStr = "advertiserId=" + $window.localStorage.getItem("advertiserId");
+            advertiserId = $window.localStorage.getItem("advertiserId");
+            var headers = {
+                "Content-Type": "application/json",
+                "userId": $scope.userId,
+                "accessToken": $scope.accessToken
+            }
+            $http({
+                method: 'GET',
+                url: apiBase + "/user/fetchparentcampaignsbyadvertiser" + "?" + queryStr,
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            }).then(function (response) {
+                if (response.data.appStatus == '0') { // success
+                    $scope.parentCompaign = response.data.parentCampaigns;
+					$scope.deleteCount = 0;
+					$scope.activeParentLength = response.data.parentCampaigns.length;
+                    console.log($scope.parentCompaign);
+                    if ($scope.parentCompaign.length > 0) {
+                        $scope.userNetworkMapId();
+                        $scope.downloadAdvertiserLogo();
+                        $scope.selectedTab = 1;
+                        angular.forEach($scope.parentCompaign, function(value, key){
+							$scope.parentCampaignId=$scope.parentCompaign[key].parentCampaignId;
+							$scope.parentCampaignStatus=$scope.parentCompaign[key].parentCampaignStatus;
+							if($scope.parentCampaignStatus == "DELETED"){
+								$scope.deleteCount = $scope.deleteCount + 1;
+							}
+                        });						
+						angular.forEach($scope.parentCompaign, function(value, key){
+                             var createdOn = $scope.parentCompaign[key].createdOn;
+							 $scope.parentCompaign[key].createdOn = $scope.localDate(createdOn);
+                        });
+						
+                        $scope.allParentCompaign = response.data.parentCampaigns;
+                        $scope.compaignContent = $scope.contents[0]
+                        $scope.tabFlag = true;
+                        angular.forEach($scope.parentCompaign, function (value, key) {
+                            $scope.flag[key] = false;
+                            $scope.popover[key] = false;
+                        });
+					$scope.readAdAccount();
+                    } else {
+						$scope.deleteCount = 0;
+						$scope.activeParentLength=0;
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        $scope.parentCampaignsArray = [];
+                    }
+				
+                } else { // failed
+                    if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                    
+                }
+            });
+        }
+
+        function GetScreenCordinates(obj) {
+            var p = {};
+            p.x = obj.offsetLeft;
+            p.y = obj.offsetTop;
+            while (obj.offsetParent) {
+                p.x = p.x + obj.offsetParent.offsetLeft;
+                p.y = p.y + obj.offsetParent.offsetTop;
+                if (obj == document.getElementsByTagName("body")[0]) {
+                    break;
+                } else {
+                    obj = obj.offsetParent;
+                }
+            }
+            return p;
+        }
+        $scope.getScroll = function () {
+            if (window.pageYOffset != undefined) {
+                return [pageXOffset, pageYOffset];
+            }
+            else {
+                var sx, sy, d = document, r = d.documentElement, b = d.body;
+                sx = r.scrollLeft || b.scrollLeft || 0;
+                sy = r.scrollTop || b.scrollTop || 0;
+                sw = r.innerWidth || b.innerWidth || 0;
+                return [sx, sy];
+            }
+        }
+        $scope.editDraftCampaign = function (cNo, _obj, childCampaign) {
+			
+			
+			angular.forEach($scope.parentCompaign, function (value, key) {			
+					$scope.popover[key] = false;
+					$scope.tabPopupFlag[key] = false;
+					$scope.flag[key] = false;
+			});
+			$scope.childNum = cNo;
+			
+			if(!$scope.childPopupFlag[$scope.childNum]){
+
+				angular.forEach($scope.parentCampaignsArray, function (value, key) {	
+					$scope.childPopupFlag[key] = false;					
+				});			
+				$scope.childPopupFlag[$scope.childNum] = true;
+				$('.applyChild').show();
+			}else{	
+			
+				angular.forEach($scope.parentCampaignsArray, function (value, key) {
+					$scope.childPopupFlag[key] = false;					
+				});
+				$('.applyChild').hide();
+				$scope.childPopupFlag[$scope.childNum] = false;
+				  
+			}
+			
+			
+            $rootScope.campaignId = childCampaign.campaignId;
+			$rootScope.currentCampaignNetwork = childCampaign.network;
+			if($rootScope.currentCampaignNetwork =="Facebook") {
+				$window.localStorage.setItem("campaignId",childCampaign.campaignId);
+			} else if($rootScope.currentCampaignNetwork =="Twitter") {
+				$window.localStorage.setItem("twCampaignId",childCampaign.campaignId);
+			}
+            
+            $rootScope.campaignStatus = childCampaign.campaignStatus;            
+          
+           
+            var coordinates = GetScreenCordinates(_obj);
+            var scrollArr = $scope.getScroll();
+			
+            var element = angular.element($('body'));
+            
+            var w = angular.element($window);
+            
+        }
+	
+		$(document).click(function() {
+		
+			$('.applyParent').hide();
+			angular.forEach($scope.parentCompaign, function (value, key) {
+				$scope.tabPopupFlag[key] = false;
+			})
+			angular.forEach($scope.parentCompaign, function (value, key) {
+                        //angular.element('#tab' + (key + 1)).css('border-right', '40px solid #e4e4e4');
+				if(angular.element('#tab' + (key + 1)).css('background-color')=='rgb(255, 255, 255)'){
+					angular.element('#tab' + (key + 1)).css('border-right', '40px solid #ffffff');
+				}else{
+					angular.element('#tab' + (key + 1)).css('border-right', '40px solid #e4e4e4');
+				}
+            });
+			if(!$scope.flag[$scope._flgNo]){		
+				angular.element($('body').css("overflow-y", "scroll"));		
+			}
+		
+		
+			
+		});
+		$(document).click(function(e){
+			$scope.childEle = '#draftCampaignId'+$scope.childNum;
+			$scope.childDiv = '#childCheck'+$scope.childNum;
+			
+			$scope.checkCond = "#"+e.target.id;
+			if($scope.checkCond != $scope.childEle){
+				$($scope.childDiv).hide();
+				$scope.childPopupFlag[$scope.childNum] = false;
+			}
+			
+			if(!$scope.childPopupFlag[$scope.childNum]){
+				angular.element($('body').css("overflow-y", "scroll"));
+			}else{
+				angular.element($('body').css("overflow-y", "hidden"));
+			}
+		});
+	
+        $scope.popupOver = function (_no, _obj, parentCampaign) {
+			
+			_obj.stopPropagation();
+			angular.forEach($scope.parentCampaignsArray,function(value,key){
+				$scope.childPopupFlag[key] = false;
+				$('applyChild').hide();
+				
+			});
+			
+			/*var w = angular.element($window);
+            w.bind('click', function (e) {
+			if (e.target.id == "editCampaignModal") {
+                    var modalApproveReq = $(".edit_campaign");
+                    modalApproveReq.hide();
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    angular.forEach($scope.parentCompaign, function (value, key) {
+                        //angular.element('#tab' + (key + 1)).css('border-right', '40px solid #ff0000');
+                        if(angular.element('#tab' + (key + 1)).css('background-color')=='rgb(255, 255, 255)'){
+                            angular.element('#tab' + (key + 1)).css('border-right', '40px solid #ffffff');
+                        }
+						else{
+                            angular.element('#tab' + (key + 1)).css('border-right', '40px solid #e4e4e4');
+                        }
+                    });
+                    //angular.element('#tab' + _no).css('border-right', '40px solid #ffffff');
+                    
+                    
+                }
+            })*/
+			
+			var modalApproveReq = $(".edit_campaign");
+                    modalApproveReq.hide();
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    angular.forEach($scope.parentCompaign, function (value, key) {
+                        //angular.element('#tab' + (key + 1)).css('border-right', '40px solid #ff0000');
+                        if(angular.element('#tab' + (key + 1)).css('background-color')=='rgb(255, 255, 255)'){
+                            angular.element('#tab' + (key + 1)).css('border-right', '40px solid #ffffff');
+                        }
+						else{
+                            angular.element('#tab' + (key + 1)).css('border-right', '40px solid #e4e4e4');
+                        }
+                    });
+			
+			//$scope.childPopupFlag[$scope.childNum] = false;
+            $scope.previousParentCampName = parentCampaign.parentCampaignName;
+			$scope.hdParentCampaign = $scope.previousParentCampName;
+            $scope.selectedTab = _no;
+            $window.localStorage.setItem("parentCampaignId", parentCampaign.parentCampaignId);
+            
+            $scope.toggle = true;
+            var topPosition = 0;
+            $scope.popoverNo = _no - 1;
+            angular.element('#tab' + _no).css('border-right', '40px solid #c5c5c5');
+            
+			if(!$scope.tabPopupFlag[$scope.popoverNo]){
+				angular.forEach($scope.parentCompaign, function (value, key) {			
+					$scope.popover[key] = false;
+					$scope.tabPopupFlag[key] = false;
+					$scope.flag[key] = false;
+				});
+				angular.element($('body').css("overflow-y", "hidden"));
+				$scope.tabPopupFlag[$scope.popoverNo] = true;
+				$('.applyParent').show();
+			}else{
+				angular.forEach($scope.parentCompaign, function (value, key) {			
+					$scope.popover[key] = false;
+					$scope.tabPopupFlag[key] = false;
+					$scope.flag[key] = false;
+				});
+				angular.element($('body').css("overflow-y", "scroll"));
+			}
+			
+			
+		
+			$scope.popover[_no - 1] = true;
+            var tabTop = angular.element('#tab' + _no).offset().top;
+            var tabLeft = angular.element('#tab' + _no).offset().left;
+	
+        
+            w.bind('scroll', function () {
+                var top_div = angular.element($('editCampaignModal'));
+                var modalApproveReq = $(".edit_campaign");
+                modalApproveReq.hide();
+                //angular.element('#tab' + _no).css('border-right', '40px solid #ffffff');
+            });
+			
+        }
+
+        $scope.$watch('budget', function (newVal, oldVal) {
+            angular.element($window).bind("scroll", function () {
+                $scope.st = window.pageYOffset;
+                if ($scope.st > $scope.lastScrollTop) {
+                    $scope.direction = "down";
+                } else {
+                    $scope.direction = "up";
+                }
+
+                $scope.lastScrollTop = $scope.st;
+                $scope.$apply();
+            });
+        }, true)
+
+
+
+        $scope.cancelPopOver = function () {
+            var modalApproveReq = $(".applyParent"); // Get the modal Approve req
+            modalApproveReq.hide();
+			$scope.tabPopupFlag[$scope.popoverNo] = false;
+        }
+        $scope.getNetworkData = function () {
+            $rootScope.campaignSteps = [false,false,false,false,false]; 
+            $http({
+                method: 'GET',
+                url: apiBase + "/user/fetchallnetwork",
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            }).then(function (response) {                
+                if (response.data.appStatus == '0') { // success
+                    $scope.allNetworkallNetwork = response.data;
+                    angular.forEach($scope.parentCampaigns, function (value, key) {
+                    });
+                  $scope.getData();
+                } else { // failed
+                    console.log(response);
+                    if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                }
+            });
+
+        }
+
+        $scope.downloadAdvertiserLogo = function () {
+            $scope.advertiserLogo = "";
+            $scope.accountId = $window.localStorage.getItem("accountId");
+            $http({
+                method: 'GET',
+                url: apiBase + '/user/getaccountdetails?accountId=' + $scope.accountId,
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            }).then(function (response) {
+                if (response.data.appStatus == '0') { // success
+                    $scope.accountName = response.data.accountFetchResponse.accountName;
+                    $scope.accountLogoUrl = response.data.accountFetchResponse.logoUrl;
+                    $scope.downloadLogoURL($scope.accountLogoUrl)
+                } else { // failed
+                    if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                }
+            });
+        }
+
+        $scope.userNetworkMapId = function () {
+            $scope.accountId = $window.localStorage.getItem("accountId");
+            var queryStr = "accountId=" + $scope.accountId;
+            $http({
+                method: 'GET',
+                url: apiBase + "/user/fetchadvertisernetwork" + "?" + queryStr,
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            }).then(function (response) {
+                $window.localStorage.setItem("userNetworkMapId", response.data.advertiserNetworkList[0].userNetworkMapId);
+                if (response.data.appStatus == 0) {
+                    $window.localStorage.setItem("parentCampaignId", $scope.parentCompaign[0].parentCampaignId);
+					if($scope.selectedNetwork=='All'){
+						//$scope.fetchChildCampaign($scope.parentCompaign[0].parentCampaignId);
+						//$scope.fetchTwChildCampaign($scope.parentCompaign[0].parentCampaignId);
+						$scope.fetchAllNetworkCampaigns($scope.parentCompaign[0].parentCampaignId);
+					} else if($scope.selectedNetwork=='Facebook'){
+						$scope.fetchChildCampaign($scope.parentCompaign[0].parentCampaignId);
+					} else if($scope.selectedNetwork=='Twitter'){
+						$scope.fetchTwChildCampaign($scope.parentCompaign[0].parentCampaignId);
+					}
+					
+                    
+                } else {
+                    if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                }
+            });
+
+        }
+
+
+        $scope.downloadLogoURL = function (accountLogoUrl) {
+            var apiImageServer = appSettings.apiImageServer;
+            var parameters = {
+                'userId': $window.localStorage.getItem("userId"),
+                'accessToken': $window.localStorage.getItem("accessToken"),
+                "filePaths": [accountLogoUrl]
+            };
+            $http({
+                method: 'POST',
+                url: apiImageServer + '/downloadimages',
+                data: parameters,
+                headers: {
+                    'Content-Type': "application/json"
+                }
+            }).then(function (response) {
+                $scope.accountLogo = response.data.imageContent[accountLogoUrl];
+
+            });
+        }
+        $scope.getNetworkData();
+        
+
+		$scope.fetchAllNetworkCampaigns= function(parentCampaignId){
+                    console.log("fetch all network campaigns here");
+                    $scope.twChildCampaigns = [];
+                    $scope.fbChildCampaigns = [];
+		$rootScope.progressLoader = "block";
+			$rootScope.parentCampaignId = parentCampaignId
+			 var promises = [];
+			  var header = {
+				headers:{
+					'userId': $window.localStorage.getItem("userId"),
+					'accessToken': $window.localStorage.getItem("accessToken")
+				}
+			};
+            queryStr = "userNetworkMapId=" + $window.localStorage.getItem('twUserNetworkMapId') + "&" + "parentCampaignId=" + parentCampaignId
+			var module = apiTwitterBase + "/readcampaign" + "?" + queryStr;
+                        
+			 promises.push(apiService.getTwitterPoint(module,header).then(function(response){
+				 console.log(response);
+				 if (response.appStatus == '0') {
+                    $rootScope.progressLoader = "none";
+                    $scope.twChildCampaigns = response.campaign;
+										
+					
+				}
+				else{
+					if (response.appStatus > 0 && (response.errorMessage == 'Access token is invalid or expired' || response.errorMessage == 'Access Token is invalid or expired.')) {
+						$window.localStorage.setItem("TokenExpired", true);
+						$state.go('login');
+					} else {
+						$rootScope.progressLoader = "none";
+						$scope.editAdsetErrorMsg = 'block';
+						if (response.networkError != '' && response.networkError != undefined) {
+							if (response.networkError.message != '' && response.networkError.message != undefined) {
+									$scope.errorpopupHeading = 'Error';
+									$scope.errorMsg = response.networkError.message;
+							} else {
+									$scope.errorpopupHeading = response.networkError.error_user_title;
+									$scope.errorMsg = response.networkError.error_user_msg;
+							}
+						} else {
+							$scope.errorpopupHeading = 'Error';
+							$scope.errorMsg = response.errorMessage;
+						}
+					}
+				}
+			}));
+			$q.all(promises).finally(
+				function(){					
+					console.log(promises);
+					$scope.traverseTWCampaigns();
+				}
+			);
+		}
+		$scope.traverseTWCampaigns=function(){
+			$scope.twArray=[];
+			$scope.fbArray=[];
+			var promises = [];
+			 var index = 0;
+                         
+			angular.forEach($scope.twChildCampaigns, function (value, key) {
+				var JsonObj = $scope.twChildCampaigns[key]
+				var array = [];
+				for (var i in JsonObj) {
+					if (JsonObj.hasOwnProperty(i)) {
+						array[+i] = JsonObj[i];
+						console.log(array[+i].twCampaignStatus)
+						if (array[+i].twCampaignStatus == 'draft' || array[+i].twCampaignStatus == 'PAUSED') {
+							$scope.imagePath = $scope.imgDraftPath;
+						} else {
+							$scope.imagePath = $scope.imgEditPath;
+						}
+						angular.forEach($scope.parentCompaign, function(value1, key1){
+                             var createdOn = $scope.parentCompaign[key1].createdOn;
+							 $scope.parentCompaign[key1].createdOn = $scope.localDate(createdOn);
+                        });
+						
+						var _obj = {
+							"id": ++index,
+							"accountId": array[+i].twAdAccountId,
+							"campaignId": array[+i].twCampaignId,
+							"createdOn": $scope.localDate(array[+i].createdOn),
+                                                        "modifiedOn":$scope.localDate(array[+i].modifiedOn),
+                                                        "spend":0,
+							"parentCampaignId": array[+i].parentCampaignId,
+							"campaignStatus": array[+i].twCampaignStatus,
+							"name": array[+i].twCampaignDetails.name,
+							"status": array[+i].twCampaignDetails.entity_status,
+							"imagePath": $scope.imagePath,
+							"network":"Twitter"
+
+						}
+						$scope.twArray.push(_obj);
+						if (i) {
+						    $scope.readAdCampaignInsights(i,"Twitter");
+						}
+					}
+				}
+				if(key == ($scope.twChildCampaigns.length-1)){
+					 
+					$scope.traverseFBCampaigns(index);
+				}
+			})
+			if($scope.twChildCampaigns == undefined || $scope.twChildCampaigns.length == 0)
+                        {
+                            $scope.traverseFBCampaigns(index);
+                        }
+			
+		}
+		$scope.traverseFBCampaigns=function(index){
+                    var promises = [];
+                    var header = {
+						headers:{
+							'userId': $window.localStorage.getItem("userId"),
+							'accessToken': $window.localStorage.getItem("accessToken")
+						}
+					};
+					queryStr = "userNetworkMapId=" + $window.localStorage.getItem('userNetworkMapId') + "&" + "parentCampaignId=" + $rootScope.parentCampaignId
+					var module = apiTPBase + "/readadcampaign" + "?" + queryStr;
+					promises.push(apiService.getTwitterPoint(module,header).then(function(response){						
+						if (response.appStatus == '0') {
+							$scope.fbChildCampaigns = response.adcampaigns;
+							console.log(promises);
+                                                        console.log($scope.fbChildCampaigns);
+                                                        angular.forEach($scope.fbChildCampaigns, function (value, key) {
+                                                                var JsonObj = $scope.fbChildCampaigns[key]
+                                                                var array = [];
+                                                                for (var i in JsonObj) {
+                                                                        if (JsonObj.hasOwnProperty(i) && !isNaN(+i)) {
+                                                                                array[+i] = JsonObj[i];
+                                                                                if (array[+i].campaignStatus == 'draft' || array[+i].campaignStatus == 'PAUSED') {
+                                                                                        $scope.imagePath = $scope.imgDraftPath;
+                                                                                } else {
+                                                                                        $scope.imagePath = $scope.imgEditPath;
+                                                                                }
+                                                                                var _obj = {
+                                                                                        "id": ++index,
+                                                                                        "accountId": array[+i].accountId,
+                                                                                        "campaignId": array[+i].campaignId,
+                                                                                        "createdOn": $scope.localDate(array[+i].createdOn),
+                                                                                        "modifiedOn": $scope.localDate(array[+i].modifiedOn),
+                                                                                        "spend":0,
+                                                                                        "parentCampaignId": array[+i].parentCampaignId,
+                                                                                        "campaignStatus": array[+i].campaignStatus,
+                                                                                        "name": array[+i].campaignDetails.name,
+                                                                                        "status": array[+i].campaignDetails.status,
+                                                                                        "imagePath": $scope.imagePath,
+                                                                                        "network":"Facebook"
+                                                                                }
+                                                                                console.log(index);
+                                                                          $scope.fbArray.push(_obj);
+                                                                                if (i) {
+                                                                                        $scope.readAdCampaignInsights(i,"Facebook");
+                                                                                }
+                                                                        }
+                                                                }
+                                                                if(key == ($scope.fbChildCampaigns.length-1)){
+                                                                        //$scope.parentCampaignsArray={};
+                                                                        $scope.parentCampaignsArray = [];	
+                                                                        if($scope.fbArray.length !=0){
+                                                                                $scope.parentCampaignsArray = $scope.fbArray.concat($scope.twArray);
+                                                                        } else {
+                                                                                $scope.parentCampaignsArray = $scope.twArray;
+                                                                        }
+
+                                                                        console.log($scope.parentCampaignsArray);
+                                                                }
+                                                        })
+						}
+					}));
+					$q.all(promises).finally(
+						function(){					
+							
+							
+						}
+					);
+			
+			
+			
+			
+			
+		}
+		$scope.fetchTwChildCampaign = function(_id){
+			$rootScope.progressLoader = "block";
+            $scope.parentCampaignsArray = [];
+            var headers = {
+                "userId": $window.localStorage.getItem("userId"),
+                "accessToken": $window.localStorage.getItem("accessToken")
+            }
+            queryStr = "userNetworkMapId=" + $window.localStorage.getItem('twUserNetworkMapId') + "&" + "parentCampaignId=" + _id
+            $http({
+                method: 'GET',
+                url: apiTwitterBase + "/readcampaign" + "?" + queryStr,
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            }).then(function (response) {
+                var index = 0;
+                if (response.data.appStatus == '0') {
+                    $rootScope.progressLoader = "none";
+                    $scope.childCampaigns = response.data.campaign;
+                    angular.forEach($scope.childCampaigns, function (value, key) {
+                        var JsonObj = $scope.childCampaigns[key]
+                        var array = [];
+                        for (var i in JsonObj) {
+                            if (JsonObj.hasOwnProperty(i)) {
+                                array[+i] = JsonObj[i];
+                                console.log(array[+i])
+                                if (array[+i].twCampaignStatus == 'draft' || array[+i].twCampaignStatus == 'PAUSED') {
+                                    $scope.imagePath = $scope.imgDraftPath;
+                                } else {
+                                    $scope.imagePath = $scope.imgEditPath;
+                                }
+
+                                var _obj = {
+                                    "id": ++index,
+                                    "accountId": array[+i].twAdAccountId,
+                                    "campaignId": array[+i].twCampaignId,
+                                    "createdOn": $scope.localDate(array[+i].createdOn),
+                                    "modifiedOn": $scope.localDate(array[+i].modifiedOn),
+                                    "parentCampaignId": array[+i].parentCampaignId,
+                                    "spend":0,
+                                    "campaignStatus": array[+i].twCampaignStatus,
+                                    "name": array[+i].twCampaignDetails.name,
+                                    "status": array[+i].twCampaignDetails.entity_status,
+                                    "imagePath": $scope.imagePath,
+									"network":"Twitter"
+
+                                }
+								if(array[+i].campaignStatus != 'DELETED'){
+									$scope.childCampaignsArray.push(_obj);
+                                    $scope.parentCampaignsArray.push(_obj);
+								}
+                                if (i) {
+                                    $scope.readAdCampaignInsights(i,"Twitter");
+                                }
+
+
+
+                            }
+                        }
+                    })
+                    if ($scope.parentCampaignsArray.length > 0) {
+                        angular.element('#skills').addClass("skills");
+                    } else {
+                        angular.element('#skills').removeClass("skills");
+                    }
+					
+					//$rootScope.progressLoader = "block";
+					console.log($scope.parentCampaignsArray)
+                } else {
+                    if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                    $scope.childCampaigns = $scope.contents[0];
+                }
+
+            });
+		}
+        $scope.fetchChildCampaign = function (_id) {
+			
+			$rootScope.progressLoader = "block";
+            $scope.parentCampaignsArray = [];
+			$scope.childCampaignsArray = [];
+            //console.log(_id)
+            var headers = {
+                "userId": $window.localStorage.getItem("userId"),
+                "accessToken": $window.localStorage.getItem("accessToken")
+            }
+            queryStr = "userNetworkMapId=" + $window.localStorage.getItem('userNetworkMapId') + "&" + "parentCampaignId=" + _id
+            $http({
+                method: 'GET',
+                url: apiTPBase + "/readadcampaign" + "?" + queryStr,
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            }).then(function (response) {
+                var index = 0;
+                if (response.data.appStatus == '0') {
+                    $rootScope.progressLoader = "none";
+                    $scope.childCampaigns = response.data.adcampaigns;
+                    angular.forEach($scope.childCampaigns, function (value, key) {
+                        var JsonObj = $scope.childCampaigns[key]
+                        var array = [];
+                        for (var i in JsonObj) {
+                            if (JsonObj.hasOwnProperty(i) && !isNaN(+i)) {
+                                array[+i] = JsonObj[i];
+                                if (array[+i].campaignStatus == 'draft' || array[+i].campaignStatus == 'PAUSED') {
+                                    $scope.imagePath = $scope.imgDraftPath;
+                                } else {
+                                    $scope.imagePath = $scope.imgEditPath;
+                                }
+                                var _obj = {
+                                    "id": ++index,
+                                    "accountId": array[+i].accountId,
+                                    "campaignId": array[+i].campaignId,
+                                    "createdOn": $scope.localDate(array[+i].createdOn),
+                                    "modifiedOn": $scope.localDate(array[+i].modifiedOn),
+                                    "spend":0,
+                                    "parentCampaignId": array[+i].parentCampaignId,
+                                    "campaignStatus": array[+i].campaignStatus,
+                                    "name": array[+i].campaignDetails.name,
+                                    "status": array[+i].campaignDetails.status,
+                                    "imagePath": $scope.imagePath,
+									"network":"Facebook"
+                                }
+
+								if(array[+i].campaignStatus != 'DELETED'){
+									$scope.childCampaignsArray.push(_obj);
+								}
+                                //if(array[+i].campaignStatus != 'DELETED'){
+								if(array[+i].campaignStatus != 'DELETED'){
+										$scope.parentCampaignsArray.push(_obj);
+								}
+                                if (i) {
+                                    $scope.readAdCampaignInsights(i,"Facebook");
+                                }
+                            }
+                        }
+                    })
+                    if ($scope.parentCampaignsArray.length > 0) {
+                        angular.element('#skills').addClass("skills");
+                    } else {
+                        angular.element('#skills').removeClass("skills");
+                    }
+					console.log($scope.parentCampaignsArray)
+
+                } else {
+                    if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                    $scope.childCampaigns = $scope.contents[0];
+                }
+
+            });
+        }
+
+        $scope.readAdCampaignInsights = function (i,network) {
+            if(network == "Facebook")
+            {
+                var campaignId = $rootScope.campaignId;
+                queryStr = "userNetworkMapId=" + $window.localStorage.getItem('userNetworkMapId') + "&" + "adCampaignId=" + i;
+                $http({
+                    method: 'GET',
+                    url: apiTPBase + "/readadcampaigninsights" + "?" + queryStr,
+                    headers: {
+                        'userId': $window.localStorage.getItem("userId"),
+                        'accessToken': $window.localStorage.getItem("accessToken")
+                    }
+                }).then(function (response) {
+                    if (response.data.appStatus == '0') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        angular.forEach(response.data.adCampaignInsights[0], function (value, key) {
+                            if (!value.modifiedOn) {
+//                                $scope.readAdCampaigns(i)
+                            }
+                            else {
+    //                            for(var index = 0 ; index < $scope.childCampaignsArray)
+//                                $scope.modifiedDate = $scope.localDate(value.modifiedOn);
+                                for(var index=0;index<$scope.parentCampaignsArray.length;index++)
+                                {
+                                    if(i == $scope.parentCampaignsArray[index].campaignId)
+                                    {
+                                        $scope.parentCampaignsArray[index].modifiedOn = $scope.localDate(value.modifiedOn);
+                                        $scope.parentCampaignsArray[index].spend = value.spend;
+                                    }
+                                }
+                            }
+
+                        });
+
+                    } else {
+//calling readAdCampaigns is not required since we already have the response when it is first called with parentCampaignId
+//                        $scope.readAdCampaigns(i)
+                    }
+                });
+            }
+            else if(network == "Twitter")
+            {
+                queryStr = "userNetworkMapId=" + $window.localStorage.getItem('twUserNetworkMapId') + "&" + "adCampaignId=" + i;
+                $http({
+                    method: 'GET',
+                    url: apiTwitterBase + "/readadcampaigninsights" + "?" + queryStr,
+                    headers: {
+                        'userId': $window.localStorage.getItem("userId"),
+                        'accessToken': $window.localStorage.getItem("accessToken")
+                    }
+                }).then(function (response) {
+                    if (response.data.appStatus == '0') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        angular.forEach(response.data.adCampaignInsights[0], function (value, key) {
+                            if (!value.modifiedOn) {
+//                                $scope.readAdCampaigns(i)
+                            }
+                            else {
+    //                            for(var index = 0 ; index < $scope.childCampaignsArray)
+//                                $scope.modifiedDate = $scope.localDate(value.modifiedOn);
+                                for(var index=0;index<$scope.parentCampaignsArray.length;index++)
+                                {
+                                    if(i == $scope.parentCampaignsArray[index].campaignId)
+                                    {
+                                        $scope.parentCampaignsArray[index].modifiedOn = $scope.localDate(value.modifiedOn);
+                                        $scope.parentCampaignsArray[index].spend = value.spend;
+                                    }
+                                }
+                            }
+
+                        });
+
+                    } else {
+//calling readAdCampaigns is not required since we already have the response when it is first called with parentCampaignId
+//                        $scope.readAdCampaigns(i)
+                    }
+                });
+            }
+        }
+        $scope.readAdCampaigns = function (i) {
+            var headers = {
+                "userId": $window.localStorage.getItem("userId"),
+                "accessToken": $window.localStorage.getItem("accessToken")
+            }
+            queryStr = "userNetworkMapId=" + $window.localStorage.getItem('userNetworkMapId') + "&" + "adCampaignId=" + i
+            $http({
+                method: 'GET',
+                url: apiTPBase + "/readadcampaign" + "?" + queryStr,
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            }).then(function (response) {
+                if (response.data.appStatus == '0') {
+                    angular.forEach(response.data.adcampaigns[0], function (value, key) {
+                        $scope.modifiedDate = $scope.localDate(value.modifiedOn);
+                    });
+
+                } else {
+                    if (response.data.appStatus > 0 && response.data.errorMessage == 'Access token is invalid or expired') {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                }
+            });
+        }
+        $scope.currencyList ={};
+        $scope.loadCurrencyCode = function(){
+			$http.get("localData/currencyData.json").success(function (data){
+				$scope.currencyList = data.currencyList;
+			});
+		}
+        $scope.loadCurrencyCode();
+        $scope.checkCurrencyCode = function(_code) {
+			angular.forEach($scope.currencyList, function(value, key) {				
+				if($scope.currencyList[key].currency == _code){
+					$scope.currencyValue = $scope.currencyList[key].currencyCode;
+				}
+			});
+                        return $scope.currencyValue;			
+		}
+        $scope.readAdAccount = function () {
+            var headers = {
+                "userId": $window.localStorage.getItem("userId"),
+                "accessToken": $window.localStorage.getItem("accessToken")
+            }
+            if($window.localStorage.getItem('userNetworkMapId') != "" && $window.localStorage.getItem('userNetworkMapId') != undefined)
+            {
+                queryStr = "networkMapId=" + $window.localStorage.getItem('userNetworkMapId')
+
+                $http({
+                    method: 'GET',
+                    url: apiTPBase + "/readadaccounts" + "?" + queryStr,
+                    headers: {
+                        'userId': $window.localStorage.getItem("userId"),
+                        'accessToken': $window.localStorage.getItem("accessToken")
+                    }
+                }).then(function (response) {
+                    if (response.data.appStatus == '0') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        var JsonObj = response.data.fbReadAdAccountResponse;
+                        var array = [];
+                        for (var i in JsonObj) {
+                            if (JsonObj.hasOwnProperty(i) && !isNaN(+i)) {
+                                array[+i] = JsonObj[i];
+                                $scope.fbCurrencyCode = array[+i].fbAdAccountDetails.currency;
+    //                            $scope.currentSpend = array[+i].fbAdAccountDetails.amount_spent;
+                            }
+                        }                    
+                        $scope.fbCurrencySymbol = $scope.checkCurrencyCode($scope.fbCurrencyCode);
+                        console.log($scope.fbCurrencySymbol);
+
+                    } else {
+                        if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                            $window.localStorage.setItem("TokenExpired", true);
+                            $state.go('login');
+                        } else {
+                            $rootScope.progressLoader = "none";
+                            $scope.editAdsetErrorMsg = 'block';
+                            if (response.data.networkError != '' && response.data.networkError != undefined) {
+                                $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                                $scope.errorMsg = response.data.networkError.error_user_msg;
+                            } else {
+                                $scope.errorpopupHeading = 'Error';
+                                $scope.errorMsg = response.data.errorMessage;
+                            }
+                        }
+
+                    }
+                });
+            }
+            if($window.localStorage.getItem('twUserNetworkMapId') != "" && $window.localStorage.getItem('twUserNetworkMapId') != undefined)
+            {
+                var module1 = '/readadfundinginstruments?userNetworkMapId=' + $window.localStorage.getItem('twUserNetworkMapId');
+                var header1 = {
+                    headers: {
+                        'userId': $window.localStorage.getItem("userId"),
+                        'accessToken': $window.localStorage.getItem("accessToken")
+                    }
+                };
+                apiService.getTwr(module1,header1).then(function(res){
+                    if(res.appStatus == 0)
+                    {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"));
+                        angular.forEach(res.fundingInstruments, function(v, k){
+                            angular.forEach(v, function(v1,k1)
+                            {
+                                $scope.twCurrencyCode = v1.twFundingInstrumentDetails.currency;
+                            });
+                        });
+                        $scope.twCurrencySymbol = $scope.checkCurrencyCode($scope.twCurrencyCode);
+                        console.log($scope.twCurrencySymbol);
+                    }
+
+                });
+            }
+        }
+        
+        function timeConverter(UNIX_timestamp) {
+            var a = new Date(UNIX_timestamp);
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var year = a.getFullYear();
+            var month = months[a.getMonth()];
+            var date = a.getDate();
+            var hour = a.getHours();
+            var min = a.getMinutes();
+            var sec = a.getSeconds();
+            var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+            return time;
+        }
+
+        $scope.setDraftColor = function (_draftNo) {
+        }
+
+        $scope.onEditCampaign = function (_no) {
+			event.stopPropagation();
+		   $scope.parentCampaignName = $scope.hdParentCampaign;
+            $scope._flgNo = $scope.popoverNo;
+            angular.forEach($scope.parentCompaign, function (value, key) {
+                $scope.flag[key] = false;
+            });
+		
+			
+			if($scope.flag[_no-1] ){
+				$scope.tabPopupFlag[$scope.popoverNo] = false;	
+			}else if(!$scope.flag[_no-1]){
+				$scope.tabPopupFlag[$scope.popoverNo] = true;	
+			}
+			$scope.tabPopupFlag[$scope.popoverNo]=false;
+            $scope.flag[$scope._flgNo] = true;
+			console.log($scope.flag[_no]);
+            $scope.popover[$scope.popoverNo] = false;
+            $scope.cancelPopOver();
+            angular.element('#tab' + (_no + 1)).css('border-right', '40px solid #ffffff');
+        }
+        $scope.openDraftConfirmationPopup = function () {
+            $scope.draft_campaign_confirm = true;
+            $scope.popupTitle = "Confirm";
+            $scope.popupMessage = "Would you like to continue from where you left?";
+            angular.element($('body').css("overflow-y", "hidden"))
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.show();
+
+        }
+        $scope.checkStepStatus = function () {
+            return $window.localStorage.getItem("lastStep")
+        }
+        $scope.confirmDraft = function () {
+            angular.element($('body').css("overflow-y", "scroll"))
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.hide();
+            $scope.draft_campaign_confirm = false;
+            $rootScope.campaignState = "draftEdit"
+            $window.localStorage.setItem("campaignState", $rootScope.campaignState)
+            var step = $scope.checkStepStatus()
+
+        }
+        $scope.gotoDraft = function () {
+			if($rootScope.currentCampaignNetwork=="Facebook"){
+				if ($window.localStorage.getItem('campaignStatus') == 'ACTIVE') {
+					$state.go('app.fbcampaigndetails');
+				} else {
+					var step = $scope.checkStepToGo();
+					var modalApproveReq = $(".campaign_confirm");
+					modalApproveReq.show();
+					$scope.campaign_confirm = false;
+					console.log(step);
+					if (step == 1) {
+						$state.go('app.fbcampaigndetails');
+					}
+					if($window.localStorage.getItem("marketingObjective") == "POST_ENGAGEMENT"){
+						if (step == 2) {
+							$state.go('app.bypcampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.bypcampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.bypcampaigncreative');
+						}
+					}
+					else if($window.localStorage.getItem("marketingObjective") == "PAGE_LIKES"){
+						if (step == 2) {
+							$state.go('app.pypcampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.pypcampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.pypcampaigncreative');
+						}
+					}
+					else if($window.localStorage.getItem("marketingObjective") == "REACH"){
+						
+						if (step == 2) {
+							$state.go('app.rpcampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.rpcampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.rpcampaigncreative');
+						}
+					}
+					else if($window.localStorage.getItem("marketingObjective") == "BRAND_AWARENESS"){
+						
+						if (step == 2) {
+							$state.go('app.ibacampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.ibacampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.ibacampaigncreative');
+						}
+					}
+					else if($window.localStorage.getItem("marketingObjective") == "LINK_CLICKS"){
+						
+						if (step == 2) {
+							$state.go('app.spcampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.spcampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.spcampaigncreative');
+						}
+					}
+						else if($window.localStorage.getItem("marketingObjective") == "APP_INSTALLS"){
+						
+						if (step == 2) {
+							$state.go('app.apinstcampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.apinstcampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.apinstcampaigncreative');
+						}
+					}
+						else if($window.localStorage.getItem("marketingObjective") == "EVENT_RESPONSES"){
+						
+						if (step == 2) {
+							$state.go('app.eventscampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.eventscampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.eventscampaigncreative');
+						}
+					}
+					else if($window.localStorage.getItem("marketingObjective") == "VIDEO_VIEWS"){
+						
+						if (step == 2) {
+							$state.go('app.videocampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.videocampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.videocampaigncreative');
+						}
+					}
+					
+					
+					else if($window.localStorage.getItem("marketingObjective") == "LEAD_GENERATION"){
+						if (step == 2) {
+							$state.go('app.leadscampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.leadscampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.leadscampaigncreative');
+						}
+					}
+					else if($window.localStorage.getItem("marketingObjective") == "CONVERSIONS"){
+						if (step == 2) {
+							$state.go('app.convcampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.convcampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.convcampaigncreative');
+						}
+					}
+					else if($window.localStorage.getItem("marketingObjective") == "OFFER_CLAIMS"){
+						if (step == 2) {
+							$state.go('app.offerscampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.offerscampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.offerscampaigncreative');
+						}
+					}
+					
+					if (step == 5) {
+						$state.go('app.fbcampaignsummary');
+					}
+					if (step == 0) {
+						$state.go('app.fbcampaigndetails');
+					}
+				}
+			} else if($rootScope.currentCampaignNetwork=="Twitter"){
+				if ($window.localStorage.getItem('campaignStatus') == 'ACTIVE') {
+					$state.go('app.twittercampaigndetails');
+				} else {
+					var step = $scope.checkStepToGo();
+					var modalApproveReq = $(".campaign_confirm");
+					modalApproveReq.show();
+					$scope.campaign_confirm = false;
+					console.log(step);
+					if (step == 1) {
+						$state.go('app.twittercampaigndetails');
+					}
+					
+					if($window.localStorage.getItem("marketingObjective") == "TWEET_ENGAGEMENTS"){
+						if (step == 2) {
+							$state.go('app.twEngCampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.twEngCampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.twEngCampaigncreative');
+						}
+					}
+                                        
+                    else if($window.localStorage.getItem("marketingObjective") == "VIDEO_VIEWS"){
+						if (step == 2) {
+							$state.go('app.videoViewsCampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.videoViewsCampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.videoViewsCampaigncreative');
+						}
+					}
+					
+					else if($window.localStorage.getItem("marketingObjective") == "FOLLOWERS"){
+						if (step == 2) {
+							$state.go('app.followersCampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.followersCampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.followersCampaigncreative');
+						}
+					}
+					
+					else if($window.localStorage.getItem("marketingObjective") == "AWARENESS"){
+						if (step == 2) {
+							$state.go('app.awarenessCampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.awarenessCampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.awarenessCampaigncreative');
+						}
+					}
+					
+					   else if($window.localStorage.getItem("marketingObjective") == "WEBSITE_CLICKS"){
+						if (step == 2) {
+							$state.go('app.webVisitsCampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.webVisitsCampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.webVisitsCampaigncreative');
+						}
+					}
+                                        else if($window.localStorage.getItem("marketingObjective") == "APP_INSTALLS"){
+						if (step == 2) {
+							$state.go('app.installsofyourappCampaignaudience');
+						}
+						if (step == 3) {
+							$state.go('app.installsofyourappCampaignplan');
+						}
+						if (step == 4) {
+							$state.go('app.installsofyourappCampaigncreative');
+						}
+					}
+					
+					if (step == 5) {
+						$state.go('app.twittercampaignsummary');
+					}
+					
+				}
+			}
+
+
+
+        }
+        $scope.gotoStart = function () {
+            var modalApproveReq = $(".account_modalApprove");
+            modalApproveReq.show();
+            $scope.campaign_confirm = false;         
+		   if($rootScope.currentCampaignNetwork =="Facebook") {
+				 $state.go('app.fbcampaigndetails');
+			} else if($rootScope.currentCampaignNetwork =="Twitter") {
+				 $state.go('app.twittercampaigndetails');
+			}
+        }
+        $scope.draftcampaignedit = function () {
+            $rootScope.campaignState = "edit";
+            $window.localStorage.setItem("campaignState", $rootScope.campaignState);
+            $scope.deleteDraft = false;
+            $scope.campaign_confirm = true;
+            $scope.delete_Campaign = false;
+            $scope.removePreviousEntries();
+           
+			console.log($rootScope.currentCampaignNetwork);
+			if($rootScope.currentCampaignNetwork =="Facebook") {
+				$scope.readCampaign();
+			} else if($rootScope.currentCampaignNetwork =="Twitter") {
+				$scope.readTwCampaign();
+			}
+            
+        };
+		$scope.readPromotedTweets = function(){
+			var promises = [];
+			var header = {
+				headers:{
+					'userId': $window.localStorage.getItem("userId"),
+					'accessToken': $window.localStorage.getItem("accessToken")
+				}
+			};
+            queryStr = "adAccountId=" + $window.localStorage.getItem('twNetworkAdAccountId') + "&userNetworkMapId=" + $window.localStorage.getItem("twUserNetworkMapId")+ "&lineItemId=" + $window.localStorage.getItem("lineItemid");
+			var module = apiTwitterBase + "/getpromotedtweetsforaccount" + "?" + queryStr;                        
+			 promises.push(apiService.getTwitterPoint(module,header).then(function(response){
+				
+				 if (response.appStatus == '0') {
+					console.log(response);
+                    $rootScope.progressLoader = "none";
+					
+					 var jsonObj = response.promotedTweets;
+					 if(jsonObj.length>0){
+						 $rootScope.campaignSteps[3] = true;
+						 $rootScope.campaignSteps[4] = true;
+					 }
+					
+					
+				}
+				else{
+					if (response.appStatus > 0 && (response.errorMessage == 'Access token is invalid or expired' || response.errorMessage == 'Access Token is invalid or expired.')) {
+						$window.localStorage.setItem("TokenExpired", true);
+						$state.go('login');
+					} else {
+						$rootScope.progressLoader = "none";
+						$scope.editAdsetErrorMsg = 'block';
+						if (response.networkError != '' && response.networkError != undefined) {
+							if (response.networkError.message != '' && response.networkError.message != undefined) {
+									$scope.errorpopupHeading = 'Error';
+									$scope.errorMsg = response.networkError.message;
+							} else {
+									$scope.errorpopupHeading = response.networkError.error_user_title;
+									$scope.errorMsg = response.networkError.error_user_msg;
+							}
+						} else {
+							$scope.errorpopupHeading = 'Error';
+							$scope.errorMsg = response.errorMessage;
+						}
+					}
+				}
+			}));
+			$q.all(promises).finally(
+				function(){					
+					console.log(promises);					
+				}
+			);
+		}
+		$scope.readTwLineItem = function(){
+			var promises = [];
+			var header = {
+				headers:{
+					'userId': $window.localStorage.getItem("userId"),
+					'accessToken': $window.localStorage.getItem("accessToken")
+				}
+			};
+            queryStr = "campaignId=" + $window.localStorage.getItem('twCampaignId') + "&userNetworkMapId=" + $window.localStorage.getItem("twUserNetworkMapId");
+			var module = apiTwitterBase + "/readlineitems" + "?" + queryStr;                        
+			 promises.push(apiService.getTwitterPoint(module,header).then(function(response){
+				
+				 if (response.appStatus == '0') {
+					console.log(response);
+                    //$rootScope.progressLoader = "none";
+					$rootScope.campaignSteps[1] = true;
+					$rootScope.campaignSteps[2] = true;
+					 var jsonObj = response.lineItems;
+					 console.log(jsonObj);
+						angular.forEach(jsonObj, function (value, key) {
+                        var JsonObj = jsonObj[key];
+                        var array = [];
+                        for (var i in JsonObj) {
+                            if (JsonObj.hasOwnProperty(i)) {
+                                array[+i] = JsonObj[i];
+								console.log(array[+i].twLineItemId);
+                                $window.localStorage.setItem("marketingObjective", array[+i].twLineItemDetails.objective);
+								$window.localStorage.setItem("lineItemid",array[+i].twLineItemId);
+								$scope.readPromotedTweets();
+                            }
+                        }
+                    });
+					
+				}
+				else{
+					if (response.appStatus > 0 && (response.errorMessage == 'Access token is invalid or expired' || response.errorMessage == 'Access Token is invalid or expired.')) {
+						$window.localStorage.setItem("TokenExpired", true);
+						$state.go('login');
+					} else {
+						$rootScope.progressLoader = "none";
+						$scope.editAdsetErrorMsg = 'block';
+						if (response.networkError != '' && response.networkError != undefined) {
+							if (response.networkError.message != '' && response.networkError.message != undefined) {
+									$scope.errorpopupHeading = 'Error';
+									$scope.errorMsg = response.networkError.message;
+							} else {
+									$scope.errorpopupHeading = response.networkError.error_user_title;
+									$scope.errorMsg = response.networkError.error_user_msg;
+							}
+						} else {
+							$scope.errorpopupHeading = 'Error';
+							$scope.errorMsg = response.errorMessage;
+						}
+					}
+				}
+			}));
+			$q.all(promises).finally(
+				function(){					
+					console.log(promises);					
+				}
+			);
+			
+		}
+		$scope.readTwCampaign = function(){
+			$rootScope.progressLoader = "block";
+			var promises = [];
+			  var header = {
+				headers:{
+					'userId': $window.localStorage.getItem("userId"),
+					'accessToken': $window.localStorage.getItem("accessToken")
+				}
+			};
+			console.log($rootScope.campaignId);
+            queryStr = "userNetworkMapId=" + $window.localStorage.getItem('twUserNetworkMapId') + "&" + "campaignId=" + $rootScope.campaignId;
+			var module = apiTwitterBase + "/readcampaign" + "?" + queryStr;                        
+			 promises.push(apiService.getTwitterPoint(module,header).then(function(response){
+				 //console.log(response);
+				 if (response.appStatus == '0') {
+                   // $rootScope.progressLoader = "none";
+                    $scope.twChildCampaigns = response.campaign;
+					
+					 var jsonObj = response.campaign;
+					// console.log(jsonObj);
+						angular.forEach(jsonObj, function (value, key) {
+                        var JsonObj = jsonObj[key];
+                        var array = [];
+                        for (var i in JsonObj) {
+                            if (JsonObj.hasOwnProperty(i)) {
+                                array[+i] = JsonObj[i];
+								$scope.twCampaignName = array[+i].twCampaignDetails.name;
+                                if(array[+i].twCampaignDetails.id) {
+                                    $rootScope.campaignSteps[0] = true;
+                                }
+								
+                                $window.localStorage.setItem("currentCampaignStatus", $scope.campaignDetails.campaignStatus);
+                                globalData.setLocal("campaign", i, array[+i].twCampaignDetails);
+                                $window.localStorage.setItem("twCampaignId", array[+i].twCampaignDetails.id);
+                                $timeout($scope.callBookMarkPopup, 2500);
+
+                            }
+                        }
+                    });
+					
+					$scope.readTwLineItem();
+				}
+				else{
+					if (response.appStatus > 0 && (response.errorMessage == 'Access token is invalid or expired' || response.errorMessage == 'Access Token is invalid or expired.')) {
+						$window.localStorage.setItem("TokenExpired", true);
+						$state.go('login');
+					} else {
+						$rootScope.progressLoader = "none";
+						$scope.editAdsetErrorMsg = 'block';
+						if (response.networkError != '' && response.networkError != undefined) {
+							if (response.networkError.message != '' && response.networkError.message != undefined) {
+									$scope.errorpopupHeading = 'Error';
+									$scope.errorMsg = response.networkError.message;
+							} else {
+									$scope.errorpopupHeading = response.networkError.error_user_title;
+									$scope.errorMsg = response.networkError.error_user_msg;
+							}
+						} else {
+							$scope.errorpopupHeading = 'Error';
+							$scope.errorMsg = response.errorMessage;
+						}
+					}
+				}
+			}));
+			$q.all(promises).finally(
+				function(){					
+					console.log(promises);
+					
+				}
+			);
+		}
+        $scope.callBookMarkPopup = function () {
+            $rootScope.progressLoader = "none";
+            if ($window.localStorage.getItem("role") != "Advertiser") {
+                $state.go('app.fbcampaigndetails');
+            } else {
+                if ($window.localStorage.getItem("currentCampaignStatus") != "ACTIVE") {
+                    var modalApproveReq = $(".account_modalApprove");
+                    modalApproveReq.show();
+                } else {
+                    $state.go('app.fbcampaigndetails');
+                }
+            }
+
+        }
+        $scope.readCampaign = function () {
+            $rootScope.progressLoader = "block";
+            var campaignId = $rootScope.campaignId;
+            var headers = {
+                "userId": $window.localStorage.getItem("userId"),
+                "accessToken": $window.localStorage.getItem("accessToken")
+            }
+            queryStr = "userNetworkMapId=" + $window.localStorage.getItem('userNetworkMapId') + "&" + "adCampaignId=" + campaignId
+            $http({
+                method: 'GET',
+                url: apiTPBase + "/readadcampaign" + "?" + queryStr,
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            }).then(function (response) {
+                if (response.data.appStatus == '0') {
+                    var jsonObj = response.data.adcampaigns;
+                    angular.forEach(jsonObj, function (value, key) {
+                        var JsonObj = jsonObj[key];
+                        var array = [];
+                        for (var i in JsonObj) {
+                            if (JsonObj.hasOwnProperty(i) && !isNaN(+i)) {
+                                array[+i] = JsonObj[i];
+                                $scope.campaignDetails = array[+i];
+                                if ($scope.campaignDetails.campaignId) {
+                                    $rootScope.campaignSteps[0] = true;
+                                }
+								$window.localStorage.setItem("marketingObjective", $scope.campaignDetails.campaignDetails.objective);
+                                $window.localStorage.setItem("currentCampaignStatus", $scope.campaignDetails.campaignStatus);
+                                globalData.setLocal("campaign", i, $scope.campaignDetails);
+                                $window.localStorage.setItem("campaignId", $scope.campaignDetails.campaignId);
+                                $timeout($scope.callBookMarkPopup, 2500);
+
+                            }
+                        }
+                    });
+                    //
+                    $scope.readAdset();
+                } else {
+                    if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                }
+            });
+        }
+        $scope.readAdset = function () {
+            var campaignId = $rootScope.campaignId;
+            queryStr = 'adCampaignId=' + campaignId + '&' + 'userNetworkMapId=' + $window.localStorage.getItem('userNetworkMapId'),
+                    $http({
+                        method: 'GET',
+                        url: apiTPBase + "/readadset" + "?" + queryStr,
+                        headers: {
+                            'userId': $window.localStorage.getItem("userId"),
+                            'accessToken': $window.localStorage.getItem("accessToken")
+                        }
+                    }).then(function (response) {
+                if (response.data.appStatus == '0') {
+                    var jsonObj = response.data.adsets;
+                    if (jsonObj.length > 0) {
+                        angular.forEach(jsonObj, function (value, key) {
+                            var JsonObj = jsonObj[key];
+                            var array = [];
+                            for (var i in JsonObj) {
+                                if (JsonObj.hasOwnProperty(i) && !isNaN(+i)) {
+                                    array[+i] = JsonObj[i];
+                                    $scope.adsetDetails = array[+i];
+                                    if ($scope.adsetDetails.adsetId) {
+                                        $rootScope.campaignSteps[1] = true;
+                                        $rootScope.campaignSteps[2] = true;
+                                    }
+                                    globalData.setLocal("adset", i, $scope.adsetDetails);
+                                    $window.localStorage.setItem("adsetId", $scope.adsetDetails.adsetId);
+                                }
+                            }
+                        });
+                        $scope.readAd();
+                    } else {
+
+                    }
+
+                } else {
+                    if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                }
+            });
+        }
+        $scope.getAdCreativeIdFromFaceBook = function () {
+            var adId = $window.localStorage.getItem("adId");
+            var queryStr = "https://graph.facebook.com/v2.9/" + adId + "?access_token=" + $window.localStorage.getItem("networkAccessToken") + "&fields=creative";
+            $http({
+                method: 'GET',
+                url: queryStr
+            }).then(function (response) {
+                if (response.data.creative.id) {// success
+                    $window.localStorage.setItem("adCreativeId", response.data.creative.id)
+                    $scope.readAdCreative();
+                }
+            })
+        }
+        $scope.readAdCreative = function () {
+            var adId = $window.localStorage.getItem('adId');
+            queryStr = 'adId=' + adId + '&' + 'userNetworkMapId=' + $window.localStorage.getItem('userNetworkMapId'),
+                    $http({
+                        method: 'GET',
+                        url: apiTPBase + "/readadsetadcreative" + "?" + queryStr,
+                        headers: {
+                            'userId': $window.localStorage.getItem("userId"),
+                            'accessToken': $window.localStorage.getItem("accessToken")
+                        }
+                    }).then(function (response) {
+                if (response.data.appStatus == '0') {
+                    var jsonObj = response.data.adCreatives;
+                    angular.forEach(jsonObj, function (value, key) {
+                        var JsonObj = jsonObj[key];
+                        var array = [];
+                        for (var i in JsonObj) {
+                            if (JsonObj.hasOwnProperty(i) && !isNaN(+i)) {
+                                array[+i] = JsonObj[i];
+                                $scope.adCreativeDetails = array[+i];
+                                $window.localStorage.setItem("adCreativeId", $scope.adCreativeDetails.adCreativeID);
+                                if ($window.localStorage.getItem("adCreativeId") && $window.localStorage.getItem("adId")) {
+                                    $rootScope.campaignSteps[3] = true;
+                                    $rootScope.campaignSteps[4] = true;
+                                }
+
+                            }
+                        }
+                    });
+
+                } else {
+                    if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                }
+            });
+        }
+        $scope.readAd = function () {
+            var adsetId = $window.localStorage.adsetId;
+            queryStr = 'adSetId=' + adsetId + '&' + 'userNetworkMapId=' + $window.localStorage.getItem('userNetworkMapId'),
+                    $http({
+                        method: 'GET',
+                        url: apiTPBase + "/readaddata" + "?" + queryStr,
+                        headers: {
+                            'userId': $window.localStorage.getItem("userId"),
+                            'accessToken': $window.localStorage.getItem("accessToken")
+                        }
+                    }).then(function (response) {
+                if (response.data.appStatus == '0') {
+                    var jsonObj = response.data.ads;
+                    if (jsonObj.length > 0) {
+                        angular.forEach(jsonObj, function (value, key) {
+                            var JsonObj = jsonObj[key];
+                            var array = [];
+                            for (var i in JsonObj) {
+                                if (JsonObj.hasOwnProperty(i) && !isNaN(+i)) {
+                                    array[+i] = JsonObj[i];
+                                    $scope.adDetails = array[+i];
+										if($scope.adDetails.status=="PAUSED" || $scope.adDetails.status=="ACTIVE"){
+                                    $window.localStorage.setItem("adId", $scope.adDetails.id);
+                                    if ($window.localStorage.getItem("adId")) {
+                                        $rootScope.campaignSteps[3] = true;
+                                        if ($window.localStorage.getItem("currentCampaignStatus")) {
+                                            $rootScope.campaignSteps[4] = true;
+                                        }
+
+                                    }
+										}
+                                }
+                            }
+                        });
+                        $scope.getAdCreativeIdFromFaceBook();
+                    } else {
+
+                    }
+
+
+
+                } else {
+                    if (response.data.appStatus > 0 && (response.data.errorMessage == 'Access token is invalid or expired' || response.data.errorMessage == 'Access Token is invalid or expired.')) {
+                        $window.localStorage.setItem("TokenExpired", true);
+                        $state.go('login');
+                    } else {
+                        $rootScope.progressLoader = "none";
+                        $scope.editAdsetErrorMsg = 'block';
+                        if (response.data.networkError != '' && response.data.networkError != undefined) {
+                            $scope.errorpopupHeading = response.data.networkError.error_user_title;
+                            $scope.errorMsg = response.data.networkError.error_user_msg;
+                        } else {
+                            $scope.errorpopupHeading = 'Error';
+                            $scope.errorMsg = response.data.errorMessage;
+                        }
+                    }
+                }
+            });
+        }
+        $scope.checkStepToGo = function () {
+            var count = 0;
+
+            angular.forEach($rootScope.campaignSteps, function (value, key) {
+                if ($rootScope.campaignSteps[key] == true) {
+                    count++;
+                }
+            });
+            return count;
+        }
+        $scope.deleteDraft = function () {
+            var modalApproveReq = $(".edit_child_campaign");
+            modalApproveReq.hide();
+            $scope.popupTitle = "Delete";
+            $scope.popupMessage = "Would you like to delete the Draft Campaign?";
+            angular.element($('body').css("overflow-y", "hidden"))
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.show();
+            $scope.failure_deletedraft_campaign_networkerror = false;
+        }
+        $scope.deleteDraft_close = function () {
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.hide();
+        }
+        $scope.onEditDraftCampaign = function (_no) {
+            $scope.openDraftConfirmationPopup();
+            var modalApproveReq = $(".edit_child_campaign");
+            modalApproveReq.hide();
+        }
+
+
+        $scope.cancelCampaignName = function () {
+			angular.element($('body').css("overflow-y", "scroll"));
+            $scope.flag[$scope._flgNo] = false;
+            angular.forEach($scope.parentCompaign, function (value, key) {
+                if(angular.element('#tab' + (key + 1)).css('background-color')=='rgb(255, 255, 255)'){
+                    angular.element('#tab' + (key + 1)).css('border-right', '40px solid #ffffff');
+                }else{
+                    angular.element('#tab' + (key + 1)).css('border-right', '40px solid #e4e4e4');
+                }
+            });
+            console.log($scope.previousParentCampName);
+            var flagNum = $scope._flgNo+1;
+            var flagNumberID = "#tab"+flagNum;
+        }
+        
+        $scope.updateCompaignName = function (data,parentName,event) {
+			angular.element($('body').css("overflow-y", "scroll"));
+			//angular.element('#tab' + ($scope.selectedTab)).css('border-right', '40px solid #ffffff');
+			event.stopPropagation();
+			
+            $scope.flag[$scope._flgNo] = false;
+            $scope.parentName=parentName;
+            var accessToken = $scope.accessToken;
+            var id = $scope.parentCompaign[$scope._flgNo].parentCampaignId;
+            var startDate = $scope.parentCompaign[$scope._flgNo].startDate;
+			if (startDate != null) {
+				startDate = startDate.split(" ")[0];
+				startDate = startDate.split('-')[2] + "-" + startDate.split('-')[1] + "-" + startDate.split('-')[0];
+			}
+            var endDate = $scope.parentCompaign[$scope._flgNo].endDate;
+            if (endDate != null) {
+				endDate = endDate.split(" ")[0];
+				endDate = endDate.split('-')[2] + "-" + endDate.split('-')[1] + "-" + endDate.split('-')[0];
+			}
+            var headers = {
+                "Content-Type": "application/json"
+            }
+            var parameters = {
+                "userId": $scope.userId,
+                "accessToken": $scope.accessToken,
+                "parentCampaignId": id,
+                "startDate": startDate,
+                "endDate": endDate,
+                "parentCampaignStatus": data,
+                "parentCampaignName" : parentName,
+                "advertiserId": $window.localStorage.getItem("advertiserId")
+            }
+
+            $http({
+                url: apiBase + '/user/updateparentcampaign',
+                dataType: 'json',
+                method: 'POST',
+                data: parameters,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).success(function (response) {
+                if (response.appStatus == 0) {
+                    var modalApproveReq = $(".updateCampaign"); // Get the modal Approve req
+                    modalApproveReq.show();
+                    $scope.success_update_campaign=true;
+                    $scope.failure_update_campaign=false;
+					$scope.getData();
+                } else {
+                    var modalApproveReq = $(".updateCampaign"); // Get the modal Approve req
+                    modalApproveReq.show();
+                    $scope.success_update_campaign=false;
+                    $scope.failure_update_campaign=true;
+                }
+
+
+            }).error(function (error) {
+                //ERROR SECTION
+                //alert(error);
+            });
+			 angular.element($('body').css("overflow-y", "scroll"));
+        }
+        
+        $scope.cancelSuccessPopupUpdate=function(){
+            angular.element($('body').css("overflow-y", "scroll"));
+            var modalRejectReq = $(".updateCampaign"); // Get the modal Approve req
+            modalRejectReq.hide();
+            $scope.parentName="";
+            
+        }
+        $scope.showSuccessFailurePopup = function (param1, param2, param3) {
+            var modalApproveReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalApproveReq.show();
+            if (param2 == "failure") {
+                $scope.success_delete_campaign = false;
+                $scope.failure_delete_campaign = true;
+                $scope.success_campaign = false;
+                $scope.deleteDraft = false;
+            } else {
+                $scope.failure_delete_campaign = false;
+                $scope.deleteDraft = false;
+                if (param3 == "Parent Campaign is deleted successfully") {
+                    $scope.success_campaign = false;
+                    $scope.success_delete_campaign = true;
+                } else {
+                    $scope.success_campaign = true;
+                    $scope.success_delete_campaign = false;
+                }
+            }
+            $scope.popupTitle = param1;
+            $scope.popupMessage = param3;
+
+        }
+        $scope.postDeleteCampaignAPI = function () {
+            $scope.flag[$scope._flgNo] = false;
+            var accessToken = $scope.accessToken;
+            var id = $scope.parentCompaign[$scope.selectedTab - 1].parentCampaignId;
+            
+            if($scope.parentCompaign[$scope.selectedTab - 1].startDate != '' && $scope.parentCompaign[$scope.selectedTab - 1].startDate != null && $scope.parentCompaign[$scope.selectedTab - 1].startDate != undefined){
+            var startDate = $scope.parentCompaign[$scope.selectedTab - 1].startDate.split(" ")[0]
+            startDate = startDate.split('-')[2] + "-" + startDate.split('-')[1] + "-" + startDate.split('-')[0]
+            var endDate = $scope.parentCompaign[$scope.selectedTab - 1].endDate.split(" ")[0]
+            endDate = endDate.split('-')[2] + "-" + endDate.split('-')[1] + "-" + endDate.split('-')[0]
+        }else{
+            var startDate = null;
+            var endDate = null;
+        }
+			var name = $scope.parentCompaign[$scope.selectedTab - 1].parentCampaignName;
+            var headers = {
+                "userId": $scope.userId,
+                "accessToken": $scope.accessToken
+            }
+            var parameters = {
+                "userId": $scope.userId,
+                "accessToken": $scope.accessToken,
+                "parentCampaignId": id,
+                "startDate": startDate,
+                "endDate": endDate,
+                "parentCampaignStatus": "DELETED",
+                "advertiserId": $window.localStorage.getItem("advertiserId"),
+				"parentCampaignName" : name
+			}
+
+            $http({
+                url: apiBase + '/user/updateparentcampaign',
+                dataType: 'json',
+                method: 'POST',
+                data: parameters,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).success(function (response) {
+                $scope.loader = false;
+                if (response.appStatus == 0) {
+
+                    $scope.showSuccessFailurePopup('Delete Parent Campaign', 'success', "Parent Campaign is deleted successfully")
+                } else {
+
+                    $scope.showSuccessFailurePopup('Delete Parent Campaign', 'failure', "This task cannot be completed as there are active network campaigns associated with this parent campaign")
+                }
+
+
+            }).error(function (error) {
+                //ERROR SECTION
+                //alert(error);
+            });
+
+        }
+		
+        $scope.deleteCampaign = function (_no) {		
+            _no = $scope.popoverNo;
+            var delete_modalReq = $(".account_modalApprove"); // Get the modal Approve req
+            delete_modalReq.show();
+            $scope.create_Campaign = false;
+            $scope.delete_Campaign = true;
+            $scope.campaign_confirm = false;
+            $scope.success_delete_campaign = false;
+            $scope.failure_delete_campaign = false;
+            $scope.failure_deletedraft_campaign = false;
+            $scope.deleteDraft = false;
+            $scope.popover[$scope.popoverNo] = false;
+            $scope.cancelPopOver();
+            angular.element('#tab' + (_no + 1)).css('border-right', '40px solid #ffffff');
+
+        }
+        $scope.deleteThisCampaign = function (compaignName) {
+            $scope.create_Campaign = false;
+            $scope.delete_Campaign = false;
+            //$scope.success_delete_campaign = true;
+            $scope.success_campaign = false;
+
+            $scope.failure_delete_campaign = false;
+            $scope.loader = true;
+            $scope.postDeleteCampaignAPI();
+
+
+        }
+
+
+
+        $scope.success_deleted_draft = function () {
+            $scope.success_delete_campaign = true;
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.show();
+
+        }
+
+
+        //===============================
+        //DELETE DRAFT CAMPAIGN
+        $scope.deleteDraftCampaign = function () {
+            var modalApproveReq = $(".edit_child_campaign");
+            modalApproveReq.hide();
+            $scope.deleteDraft = true;
+            $scope.delete_Campaign = false;
+            $scope.failure_delete_campaign = false;
+            angular.element($('body').css("overflow-y", "hidden"))
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.show();
+            $scope.success_delete_campaign = false;
+            $scope.failure_deletedraft_campaign_networkerror = false;
+            $scope.failure_deletedraft_campaign = false;
+        }
+        $scope.onEditDraftCampaign = function (_no) {
+            $scope.openDraftConfirmationPopup();
+            var modalApproveReq = $(".edit_child_campaign");
+            modalApproveReq.hide();
+            $scope.success_delete_campaign = false;
+        }
+
+
+
+        $scope.addNewCompaignName = function (data) {
+            $scope.delete_Campaign = false;
+            $scope.success_delete_campaign = false;
+            $scope.failure_delete_campaign = false;
+
+            $scope.postDeleteCampaignAPI();
+        }
+
+        $scope.saveNewCampaignName = function (_name) {
+			var nameHasAlphabets = false;
+			
+			//var boolean;
+            $scope.newCname = _name;
+           // console.log($scope.newCname);
+			if($scope.newCname == '' || $("select[name='networkName'] option:selected").index() == 0 && (_name.split(' ').join('').length) > 0){
+				$('.disableCnf').prop('disabled', true);
+			}
+			else{
+				$('.disableCnf').prop('disabled', false);
+			}
+
+        }
+        $scope.openPopup = function () {
+            angular.element($('body').css("overflow-y", "hidden"))
+            var modalApproveReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalApproveReq.show();
+            $scope.create_Campaign = true;
+            $scope.failure_deletedraft_campaign = false;
+            $scope.delete_Campaign = false;
+            $scope.success_delete_campaign = false;
+            $scope.failure_delete_campaign = false;
+            $scope.campaign_confirm = false;
+            $scope.deleteDraft = false;
+            $('.disableCnf').prop('disabled', true);
+
+        }
+        $scope.removePreviousEntries = function () {
+			console.log('removePreviousEntries')
+            $window.localStorage.removeItem("campaignId");
+            $window.localStorage.removeItem("adsetId");
+            $window.localStorage.removeItem("adCreativeId");
+            $window.localStorage.removeItem("adId");
+	    $window.localStorage.removeItem("campaignAudienceTargetType");
+	    $window.localStorage.removeItem("campaignAudienceTarget");			
+            globalData.campaignDataUpdate();
+            var obj1 = {"accountName": $window.localStorage.getItem("accountName"), "Id": $window.localStorage.getItem("accountId")}
+            globalData.setLocal("account", $window.localStorage.getItem("accountId"), obj1);
+
+
+        }
+        $scope.createNewCampaign = function (_name, networkName) {
+            angular.element($('body').css("overflow-y", "scroll"))
+			console.log($scope.newCname);
+			console.log(networkName);
+			if(networkName == 'Facebook'){
+                if ($scope.newCname != undefined && $scope.newCname != null && $scope.newCname != "") {
+                    $scope.parentCampaignName = _name
+                    $scope.addNewCompaignName($scope.newCname);
+                } else {
+					console.log('else')
+                    $rootScope.isChildCampaignEdit = "false";
+                    $window.localStorage.setItem("isChildCampaignEdit", $rootScope.isChildCampaignEdit)
+                    angular.forEach($rootScope.campaignSteps, function (value, key) {
+                        $rootScope.campaignSteps[key] = false;
+
+                    });
+                    $scope.removePreviousEntries();
+                    $rootScope.campaignState = "create";
+                    $window.localStorage.setItem("campaignState", $rootScope.campaignState);
+                    $state.go("app.fbcampaigndetails");
+                }
+
+
+			}else if(networkName == "Twitter"){
+				if ($scope.newCname != undefined && $scope.newCname != null && $scope.newCname != "") {
+                    $scope.parentCampaignName = _name
+                    $scope.addNewCompaignName($scope.newCname);
+                } else {
+                    $rootScope.isChildCampaignEdit = "false";
+                    $window.localStorage.setItem("isChildCampaignEdit", $rootScope.isChildCampaignEdit)
+                    angular.forEach($rootScope.campaignSteps, function (value, key) {
+                        $rootScope.campaignSteps[key] = false;
+
+                    });
+                    $scope.removePreviousEntries();
+                    $rootScope.campaignState = "create";
+                    $window.localStorage.setItem("campaignState", $rootScope.campaignState);
+                    $state.go("app.twittercampaigndetails");
+                }
+			}
+
+        }
+        
+		$scope.cancelAndRetain = function () {
+            angular.element($('body').css("overflow-y", "scroll"))
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.hide();
+			$scope.create_Campaign = false;
+			$scope.campaignFlag = false;
+			$('.disableCnf').prop('disabled','true');
+			$(".form-control").prop('selectedIndex',0);
+			$scope.networkNames = "";
+			$scope.option= "";
+			$scope.testObj = "";			
+			console.log($scope.testObj);
+
+        }
+        $scope.cancel = function (_msg) {
+            angular.element($('body').css("overflow-y", "scroll"))
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.hide();
+			if($scope.success_delete_campaign){
+				$state.reload();
+			}
+            $scope.toggleTab($scope.compaignNo,$scope.object);          
+            $scope.removePreviousEntries();
+			
+        }
+        $scope.cancelSuccessPopup = function (_msg) {
+            angular.element($('body').css("overflow-y", "scroll"))
+            var modalRejectReq = $(".account_modalApprove");
+            modalRejectReq.hide();
+            $rootScope.campaignState = "create";
+            $window.localStorage.setItem("campaignState", $rootScope.campaignState);
+			var networkName = $window.localStorage.getItem("networkName");
+			if(networkName == "Facebook"){
+				$state.go("app.fbcampaigndetails");
+			}else if(networkName == "Twitter"){
+				$state.go("app.twittercampaigndetails");
+			}
+            $scope.removePreviousEntries();
+        }
+
+
+
+        $scope.selectParentCampaign = function (_obj) {
+            var id = "";
+			var create = "Create";
+            if (_obj != create) {
+                var obj = JSON.parse(_obj)
+                var parentCampaigId = obj.parentCampaignId;
+                $window.localStorage.setItem("parentCampaignId", parentCampaigId);
+                $scope.parentCampaignName = obj.parentCampaignName;
+                $scope.newCname = "";
+                id = _obj
+				$scope.campaignFlag = false;
+				$scope.testObj = obj;
+				if($("select[name='networkName'] option:selected").index() == 0){
+				$('.disableCnf').prop('disabled', true);
+				}
+				else{
+					$('.disableCnf').prop('disabled', false);
+				}
+
+            } else {
+                id = _obj
+                $scope.campaignFlag = true;
+                $('.disableCnf').prop('disabled', true);
+            }
+        }
+        $scope.setValue = function (_obj) {
+            // console.log(_obj)
+        }
+        $scope.updateLastOption = function (no) {
+            //console.log(no)	
+
+        }
+      
+		$scope.selectNetwork = function (_name) {
+			$scope.netName = _name;
+			console.log($scope.newCname);
+			$window.localStorage.setItem("networkName", $scope.networkNames);
+			if(($scope.newCname == undefined || ($("select[name='networkName'] option:selected").index() == 0) || $("select[name='setCampaignName'] option:selected").index() == 0)){
+				$('.disableCnf').prop('disabled', true);				
+			}
+			else{
+				$('.disableCnf').prop('disabled', false);
+			}
+			
+        }
+
+        $scope.addNewCompaignName = function (data) {
+            $scope.delete_Campaign = false;
+            $scope.success_delete_campaign = false;
+            $scope.failure_delete_campaign = false;
+
+            $scope.campaignFlag = false;
+
+            var parameters = {
+                "userId": $scope.userId,
+                "accessToken": $scope.accessToken,
+                "parentCampaignName": data,
+                "advertiserId": $window.localStorage.getItem("advertiserId")
+            }
+
+            $http({
+                url: apiBase + '/user/createparentcampaign',
+                dataType: 'json',
+                method: 'POST',
+                data: parameters,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).success(function (response) {
+                //console.log(response.parentCampaignId);
+                $window.localStorage.setItem("parentCampaignId", response.parentCampaignId);
+                $window.localStorage.setItem("lastStep", 1);
+
+                if (response.appStatus == 0) {
+                    $scope.loader = false;
+                    $scope.create_Campaign = false;
+                    $scope.delete_Campaign = false;
+                    $scope.success_delete_campaign = false;
+                    $scope.failure_delete_campaign = false;
+                    $scope.success_campaign = true;
+                    $scope.showSuccessFailurePopup('Create New Campaign', 'success', "The Parent Campaign was successfully created")
+                } else {
+                    $scope.loader = false;
+                    $scope.create_Campaign = false;
+                    $scope.delete_Campaign = false;
+                    $scope.success_campaign = false;
+                    $scope.success_delete_campaign = false;
+                    $scope.failure_delete_campaign = true;
+                    $scope.showSuccessFailurePopup('Create New Campaign', 'failure', "The Parent Campaign creation is failed")
+                }
+
+
+            }).error(function (error) {
+                //ERROR SECTION
+                //alert(error);
+            });
+
+        }
+
+
+
+
+        $scope.contents = [
+            [{
+                    obj: 'Early Bird Discount',
+                    no: 12000
+                }, {
+                    obj: 'ADTech - My first Ad',
+                    no: 12000
+                }],
+            [{
+                    obj: 'Media Campaign',
+                    no: 400
+                }, {
+                    obj: 'ADTech - My S Ad',
+                    no: 400
+                }, {
+                    obj: 'ADTech - My first Ad',
+                    no: 400
+                }],
+            [{
+                    obj: 'Christmas Fantasy Parade',
+                    no: 5000
+                }, {
+                    obj: 'Disney Countdown to Midnight',
+                    no: 17000
+                }],
+            [{
+                    obj: 'ADTech - My first Ad',
+                    no: 100
+                }, {
+                    obj: 'Mickeys Halloween Party',
+                    no: 100
+                }],
+            [{
+                    obj: 'Early Bird Discount',
+                    no: 100
+                }, {
+                    obj: 'Mickeys Halloween Party',
+                    no: 2000
+                }],
+            [{
+                    obj: 'Early Bird Discount',
+                    no: 100
+                }, {
+                    obj: 'Mickeys Halloween Party',
+                    no: 2000
+                }],
+            [{
+                    obj: 'Early Bird Discount',
+                    no: 100
+                }, {
+                    obj: 'Mickeys Halloween Party',
+                    no: 2000
+                }]
+        ]
+
+        $scope.networkContents = [
+            [{
+                    obj: 'Early Bird Discount',
+                    no: 12000
+                }, {
+                    obj: 'Early Bird Discount',
+                    no: 12000
+                }],
+            [{
+                    obj: 'Media Campaign',
+                    no: 400
+                }, {
+                    obj: 'ADTech - My first Ad',
+                    no: 400
+                }, {
+                    obj: 'ADTech - My first Ad',
+                    no: 400
+                }],
+            [{
+                    obj: 'ADTech - My first Ad',
+                    no: 100
+                }, {
+                    obj: 'Mickeys Halloween Party',
+                    no: 100
+                }],
+            [{
+                    obj: 'Christmas Fantasy Parade',
+                    no: 5000
+                }, {
+                    obj: 'Disney Countdown to Midnight',
+                    no: 17000
+                }],
+            [{
+                    obj: 'Early Bird Discount',
+                    no: 100
+                }, {
+                    obj: 'Mickeys Halloween Party',
+                    no: 2000
+                }],
+            [{
+                    obj: 'Early Bird Discount',
+                    no: 100
+                }, {
+                    obj: 'Mickeys Halloween Party',
+                    no: 2000
+                }],
+            [{
+                    obj: 'Early Bird Discount',
+                    no: 100
+                }, {
+                    obj: 'Mickeys Halloween Party',
+                    no: 2000
+                }],
+            [{
+                    obj: 'ADTech - My first Ad',
+                    no: 100
+                }, {
+                    obj: 'Mickeys Halloween Party',
+                    no: 100
+                }]
+        ]
+
+
+
+
+        //---------------------------
+
+
+
+
+        $scope.search = ""
+        $scope.openContainer = function () {
+            $scope.openPopupFlag = true;
+
+        }
+
+
+        $scope.enterSearchText = function (_txt) {            
+            $scope.parentCampaignsArray = [];
+            $scope.search = _txt;
+            var id = null;
+            $scope.items = $filter('filter')($scope.parentCompaign, $scope.search)
+            if ($scope.items.length == 0) {
+                $scope.compaignContent = [];
+                $scope.isEmpty = true;
+            } else {
+                if($scope.items[$scope.selectedTab - 1].parentCampaignId!='' && $scope.items[$scope.selectedTab - 1].parentCampaignId!=undefined){
+                    id = $scope.items[$scope.selectedTab - 1].parentCampaignId;
+                }
+            }
+            angular.forEach($scope.parentCompaign, function (value, key) {
+                if (id == value.parentCampaignId) {
+                    $scope.compaignContent = [];
+                    $scope.compaignContent = $scope.contents[key];
+                }
+				angular.element('#tab' + (key + 1)).css('background', '#f3f3f3');
+				angular.element('#tab' + (key + 1)).css('border-left-color', '#e4e4e4');
+                angular.element('#tab' + (key + 1)).css('border-right', '40px solid #e4e4e4');
+                angular.element('#tab' + (key + 1)).css('outline', 'none');
+            });
+
+        }
+
+        $scope.setInit = function () {
+            $('.applyParent').hide();
+			angular.forEach($scope.parentCompaign, function (value, key) {
+                angular.element('#tab' + (key + 1)).css('outline', 'none');
+				$scope.tabPopupFlag[key] = false;
+            });
+		
+			$scope.popoverNo = 0;
+			
+           angular.element('#tab' + 1).css('background', '#ffffff');
+           angular.element('#tab' + 1).css('border-left-color', '#ffb75c');
+        }
+		
+		$scope.editCampaignName = function(event){
+			console.log( $scope.selectedTab);
+			event.stopPropagation();
+		}
+
+        $scope.toggleTab = function (_obj, _this) {
+			angular.element($('body').css("overflow-y", "scroll"))
+			console.log('toggleTab '+$scope.editFlag);
+           // $scope.flag[$scope._flgNo] = false;
+			$scope.object=_this;
+            $scope.tabFlag = true;
+            $scope.compaignNo = _obj;
+            $scope.selectedTab = _obj;
+           
+            angular.forEach($scope.parentCompaign, function (value, key) {
+                angular.element('#tab' + (key + 1)).css('background', '#f3f3f3');
+                angular.element('#tab' + (key + 1)).css('border-left-color', '#e4e4e4');
+                angular.element('#tab' + (key + 1)).css('border-right', '40px solid #e4e4e4');
+                angular.element('#tab' + (key + 1)).css('outline', 'none');
+				$('.applyParent').hide();
+				$scope.flag[key] = false;
+            });
+			angular.forEach($scope.parentCampaignsArray, function (value, key) {
+				$scope.childPopupFlag[key] = false;				
+            });
+			
+			console.log($scope.parentCampaignsArray);
+            angular.element('#tab' + _obj).css('background', '#ffffff');
+            angular.element('#tab' + _obj).css('border-left-color', '#ffb75c');
+			$scope.scroll(event);
+            if ($scope.popover[_obj - 1] == true) {
+                angular.element('#tab' + _obj).css('border-right', '40px solid #c5c5c5');
+                $scope.toggle = false;
+            } else {
+                angular.element('#tab' + _obj).css('border-right', '40px solid #ffffff');
+            }
+            //alert(_obj);
+            if(angular.element('#tab' +_obj).css('background-color')=='rgb(255, 255, 255)'){
+                angular.element('#tab' + _obj).css('border-right', '40px solid #ffffff');
+            }else{
+                angular.element('#tab' + _obj).css('border-right', '40px solid #e4e4e4');
+            }
+
+            $window.localStorage.setItem("parentCampaignId", _this.parentCampaignId);
+			
+			console.log($scope.flag[$scope._flgNo]);
+			
+				if($scope.selectedNetwork=='All'){
+				//$scope.fetchChildCampaign(_this.parentCampaignId);
+				//$scope.fetchTwChildCampaign(_this.parentCampaignId);
+					$scope.fetchAllNetworkCampaigns(_this.parentCampaignId);
+				} else if($scope.selectedNetwork=='Facebook'){
+					$scope.fetchChildCampaign(_this.parentCampaignId);
+				} else if($scope.selectedNetwork=='Twitter'){
+					$scope.fetchTwChildCampaign(_this.parentCampaignId);
+				}
+			 
+			
+			 $scope.parentCampaignsArray = [];
+        }
+
+        $scope.autoToggle = function () {
+
+        }
+		/* This function is used to convert the UTC time to user time zone*/
+		$scope.localDate = function(dateString) {
+			var str;
+			if(isNaN(dateString)){
+				dateString = dateString.replace(" ","-");
+				dateString = dateString.replace(/:/g,"-");
+				arr = dateString.split("-");
+				var dateString1 = arr[1].concat("-",arr[0]).concat("-",arr[2]).concat(" ",arr[3]).concat(":",arr[4]).concat(":",arr[5]);
+				var date = new Date(dateString1);
+				var dtString=date.toString();
+				dtString=dtString.substring(0,dtString.indexOf('+'));
+				var createdOn = new Date(dtString);
+				createdOn = createdOn.toLocaleString();
+				createdOn = new Date(createdOn);
+				str = $filter('date')(createdOn, "dd-MMM-yyyy HH:mm:ss");
+			}else{
+				var date = new Date(dateString);
+				str = $filter('date')(date, "dd-MMM-yyyy HH:mm:ss");
+				console.log(str);
+			}
+				return str;
+		}
+
+        $scope.actionInit = function () {
+            $scope.compaignContent = $scope.networkContents[0];
+            if ($scope.compaignContent.length > 1) {
+                angular.element('#skills').addClass("skills");
+            } else {
+                angular.element('#skills').removeClass("skills");
+            }
+        }
+		
+        $scope.networkAction = function (_obj, title) {
+            $scope.parentCampaignsArray = [];
+            $scope.selectedMenu = _obj
+			$scope.selectedNetwork = title;
+            $scope.compaignContent = [];
+            $scope.compaignContent = $scope.networkContents[_obj - 1];
+            if ($scope.compaignContent.length > 1) {
+                angular.element('#skills').addClass("skills");
+            } else {
+                angular.element('#skills').removeClass("skills");
+            }
+            angular.forEach($scope.menuItems, function (value, key) {
+                var currentElement = angular.element('#base' + (key + 1));
+                currentElement.css('border-bottom', '4px solid #ffffff');
+                currentElement.css('outline', 'none');
+            });
+
+            angular.element('#base' + _obj).css('border-bottom', '4px solid #ff8f00');
+            angular.element('#base' + _obj).css('outline', 'none')
+			console.log($rootScope.parentCampaignId);
+			$rootScope.parentCampaignId = $window.localStorage.getItem("parentCampaignId")
+			if($scope.selectedNetwork=='All'){
+				$scope.fetchChildCampaign($rootScope.parentCampaignId);			
+				$scope.fetchTwChildCampaign($rootScope.parentCampaignId);				
+			} else if($scope.selectedNetwork=='Facebook'){
+				$scope.fetchChildCampaign($rootScope.parentCampaignId);
+				$rootScope.currentNetwork = "Facebook";
+			} else if($scope.selectedNetwork=='Twitter'){
+				$scope.fetchTwChildCampaign($rootScope.parentCampaignId);
+				$rootScope.currentNetwork = "Twitter";
+			}
+			
+
+        }
+
+        $scope.parentCampaigns = [{
+                "parentCampaignId": 5000001,
+                "parentCampaignName": "Social Media Campaign",
+                "startDate": "12-10-2016 17:39:06",
+                "endDate": "12-10-2016 17:39:06",
+                "parentCampaignStatus": "DELETED",
+                "createdOn": "15-01-2015 14:55:35",
+                "createdBy": "user@cts.com",
+                "modifiedOn": "29-11-2016 09:47:55",
+                "modifiedBy": "WagonR@maruti.com"
+            },
+            {
+                "parentCampaignId": 5000002,
+                "parentCampaignName": "Halloween Campaign 2016",
+                "startDate": "12-10-2016 17:39:06",
+                "endDate": "12-10-2016 17:39:06",
+                "parentCampaignStatus": "DELETED",
+                "createdOn": "12-10-2016 17:39:06",
+                "createdBy": "user@cts.com",
+                "modifiedOn": "25-11-2016 17:09:08",
+                "modifiedBy": "WagonR@maruti.com"
+            },
+            {
+                "parentCampaignId": 5000003,
+                "parentCampaignName": "Christmas & NewYear ",
+                "startDate": "12-10-2016 17:39:06",
+                "endDate": "12-10-2016 17:39:06",
+                "parentCampaignStatus": "live",
+                "createdOn": "12-10-2016 17:39:06",
+                "createdBy": "user@cts.com",
+                "modifiedOn": "12-10-2016 17:39:06",
+                "modifiedBy": "user@cts.com"
+            },
+            {
+                "parentCampaignId": 5000004,
+                "parentCampaignName": "Social Media Campaign",
+                "startDate": "12-10-2016 17:39:06",
+                "endDate": "12-10-2016 17:39:06",
+                "parentCampaignStatus": "DELETED",
+                "createdOn": "15-01-2015 14:55:35",
+                "createdBy": "user@cts.com",
+                "modifiedOn": "29-11-2016 09:47:55",
+                "modifiedBy": "WagonR@maruti.com"
+            },
+            {
+                "parentCampaignId": 5000005,
+                "parentCampaignName": "Halloween Campaign 2016",
+                "startDate": "12-10-2016 17:39:06",
+                "endDate": "12-10-2016 17:39:06",
+                "parentCampaignStatus": "DELETED",
+                "createdOn": "12-10-2016 17:39:06",
+                "createdBy": "user@cts.com",
+                "modifiedOn": "25-11-2016 17:09:08",
+                "modifiedBy": "WagonR@maruti.com"
+            },
+            {
+                "parentCampaignId": 5000006,
+                "parentCampaignName": "Christmas & NewYear ",
+                "startDate": "12-10-2016 17:39:06",
+                "endDate": "12-10-2016 17:39:06",
+                "parentCampaignStatus": "live",
+                "createdOn": "12-10-2016 17:39:06",
+                "createdBy": "user@cts.com",
+                "modifiedOn": "12-10-2016 17:39:06",
+                "modifiedBy": "user@cts.com"
+            },
+            {
+                "parentCampaignId": 5000007,
+                "parentCampaignName": "Christmas & NewYear ",
+                "startDate": "12-10-2016 17:39:06",
+                "endDate": "12-10-2016 17:39:06",
+                "parentCampaignStatus": "live",
+                "createdOn": "12-10-2016 17:39:06",
+                "createdBy": "user@cts.com",
+                "modifiedOn": "12-10-2016 17:39:06",
+                "modifiedBy": "user@cts.com"
+            }
+        ]
+
+        $scope.yourChecker = function (index, i) {
+            if (i.title != "Twitter") {
+                $('#base' + index).css('border-bottom', 'none');
+                $('#base' + index).css('pointer=events', 'none');
+            }
+
+        }
+
+
+        $scope.menuItems = [{
+                title: "All",
+                img: "images/accountDashboard/all.svg",
+                icon: "glyphicon glyphicon-search",
+                state: false
+
+            },
+            {
+                title: "Facebook",
+                img: "images/accountDashboard/facebook.svg",
+                icon: "\uf09a",
+                state: false
+
+            },
+            {
+                title: "Twitter",
+                img: "images/accountDashboard/twitter.svg",
+                icon: "\uf099",
+                state: false
+
+            },
+            {
+                title: "LinkedIn",
+                img: "images/accountDashboard/linked_in.svg",
+                icon: "\uf0e1",
+                state: true
+
+
+            },
+            {
+                title: "Google Adsense",
+                img: "images/accountDashboard/google_adsense.svg",
+                icon: "\uf1a0",
+                state: true
+
+            },
+            {
+                title: "Instagram",
+                img: "images/accountDashboard/instagram.svg",
+                icon: "\uf16d",
+                state: true
+
+            },
+            {
+                title: "Cognizant AdServer",
+                img: "images/accountDashboard/cts-small.png",
+                icon: "\uf0d5",
+                state: true
+
+            },
+            {
+                title: "Bing",
+                img: "images/accountDashboard/bing.svg",
+                icon: "\uf0e2",
+                state: true
+
+            }
+        ];
+
+
+        $scope.totalItems = 10 //$scope.records.length;  
+        $scope.numPerPage = 10
+
+        $scope.paginate = function (value) {
+            var begin, end, index;
+            begin = ($scope.currentPage - 1) * $scope.numPerPage;
+            end = begin + $scope.numPerPage;
+            index = $scope.records.indexOf(value);
+            return (begin <= index && index < end);
+        };
+
+        //Popup Reject
+        var modalRejectReq = $(".modalReject"); // Get the modal Reject req
+        var modalApproveReq = $(".modalApprove"); // Get the modal Reject req
+        var btn = $(".adminApprove"); // Get the button that opens the modal
+        var span = document.getElementsByClassName("close")[0]; // Get the <span> element that closes the modal
+
+        $scope.popupRejectReq = function () {
+            modalRejectReq.show();
+        }
+        $scope.closeRejectReq = function () {
+            modalRejectReq.hide();
+        }
+        $scope.popupApproveReq = function () {
+            modalApproveReq.show();
+        }
+        $scope.closeApproveReq = function () {
+            modalApproveReq.hide();
+        }
+
+
+        //==========================DELETE DRAFT CAMPAIGN============================//
+        //SERVICE FOR DELETE DRAFT 
+        $scope.deletedraft_campaign = function (data) {
+            //console.log($rootScope.campaignId);
+            $rootScope.progressLoader = "block";
+            $scope.deleteDraft_close();
+            $scope.getEditCampaignDetails();
+
+        };
+
+
+        //Fecth campaign details
+        $scope.getEditCampaignDetails = function () {
+            //console.log($rootScope.campaignId);
+            $rootScope.progressLoader = "block";
+            $scope.delete_Campaign = false;
+            var campaignId = $rootScope.campaignId;
+            var usernetworkMapId = $window.localStorage.getItem('userNetworkMapId');
+            $rootScope.usernetworkMapId = usernetworkMapId;
+            queryStr = "userNetworkMapId=" + $rootScope.usernetworkMapId + "&" + "adCampaignId=" + campaignId
+            $http({
+                method: 'GET',
+                url: apiTPBase + "/readadcampaign" + "?" + queryStr,
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            }).then(function (response) {
+                if (response.data.appStatus == '0') {
+                    //console.log(response)
+                    $rootScope.accountId = response.data.adcampaigns["0"][$rootScope.campaignId].accountId;
+                    $rootScope.parentCampaigId = response.data.adcampaigns["0"][$rootScope.campaignId].parentCampaignId;
+
+                    $scope.getCampaignDetails();
+                } else if (response.appStatus == '1') {
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.errorMessage = response.errorMessage;
+                    $scope.failure_deletedraft_campaign_show();
+
+                } else {
+                    //error
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.failure_deletedraft_campaign_networkerror_show();
+                    //console.log('error in getEditCampaignDetails');
+                }
+            });
+        };
+
+        //GET CAMPAIGN DETAILS
+        $scope.getCampaignDetails = function () {
+
+            var campaignId = $rootScope.campaignId;
+            var getCampaignDetailsheaders = {
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            };
+            var deferred = $q.defer();
+            querygetCampaignDetails = '/getcampaignbycampaignid?userNetworkMapId=' + $rootScope.usernetworkMapId + '&campaignId=' + campaignId;
+            apiService.getTp(querygetCampaignDetails, getCampaignDetailsheaders).then(function (response) {
+                if (response) {
+                    if (response.appStatus == '0') //If campaign Id exists
+                    {
+                        $rootScope.responsefromGetCampaignDetails = response.campaign;
+                     
+                        angular.forEach($scope.responsefromGetCampaignDetails, function (value, key) {
+                            var JsonObj = $scope.responsefromGetCampaignDetails;
+                            if (JsonObj.status !== 'DELETED') {
+                                JsonObj.status = "DELETED";
+                            }
+
+                        });
+                        //check for adset Id
+                        $scope.getAdSetDetails();
+                    } else if (response.appStatus == '1') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        $scope.errorMessage = response.errorMessage;
+                        $scope.failure_deletedraft_campaign_show();
+
+                    }
+                    deferred.resolve(response);
+                } else {
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.failure_deletedraft_campaign_networkerror_show();
+                    deferred.reject("Something went wrong while processing your request. Please Contact Administrator.");
+                }
+            },
+                    function (response) {
+                        deferred.reject(response);
+                    });
+            return deferred.promise;
+
+        };
+
+        //GET AD SET DETAILS
+        $scope.getAdSetDetails = function () {
+
+            var campaignId = $rootScope.campaignId;
+            var getadsetDetailsheaders = {
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            };
+            var deferred = $q.defer();
+            querygetAdSet = '/getadset?networkMapId=' + $rootScope.usernetworkMapId + '&adCampaignId=' + campaignId;
+            apiService.getTp(querygetAdSet, getadsetDetailsheaders).then(function (response) {
+                if (response) {
+                    if (response.appStatus == '0' && response.adsets.data.length != '0') // adset id exists
+                    {
+                        $rootScope.saveadsetId = response.adsets.data["0"].id;
+
+                        $rootScope.responsefromGetAdSet = response.adsets.data;
+                        angular.forEach($scope.responsefromGetAdSet, function (value, key) {
+                            var JsonObj = $scope.responsefromGetAdSet[key];
+                            if (JsonObj.status !== 'DELETED') {
+                                JsonObj.status = "DELETED";
+                            }
+                            $rootScope.responsefromGetAdSet[key] = JsonObj;
+
+                        });
+
+                        //check for ad id
+                        $scope.getAdDetails();
+                    } else if (response.adsets.data.length == '0') {
+                        $scope.deleteCampaignDetails();
+                    } else if (response.appStatus == '1') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        $scope.errorMessage = response.errorMessage;
+                        $scope.failure_deletedraft_campaign_show();
+
+                    }
+
+                    deferred.resolve(response);
+                } else {
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.failure_deletedraft_campaign_networkerror_show();
+                    deferred.reject("Something went wrong while processing your request. Please Contact Administrator.");
+                }
+            },
+                    function (response) {
+                        deferred.reject(response);
+                    });
+            return deferred.promise;
+
+        };
+
+        // Get AD Details
+        $scope.getAdDetails = function () {
+
+            var campaignId = $rootScope.campaignId;
+            var getadDetailsheaders = {
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            };
+            var deferred = $q.defer();
+            querygetAd = '/getad?userNetworkMapId=' + $rootScope.usernetworkMapId + '&campaignId=' + campaignId;
+            apiService.getTp(querygetAd, getadDetailsheaders).then(function (response) {
+                if (response) {
+                    if (response.appStatus == '0' && response.adData.data.length != '0') //if ad Id exists
+                    {
+                        $rootScope.responsefromGetAd = response.adData.data;
+                        angular.forEach($scope.responsefromGetAd, function (value, key) {
+                            var JsonObj = $scope.responsefromGetAd[key];
+                            if (JsonObj.status !== 'DELETED') {
+                                JsonObj.status = "DELETED";
+                            }
+                            $rootScope.responsefromGetAd[key] = JsonObj;
+                            $rootScope.saveAdid = response.adData.data["0"].id;
+
+                        });
+                        //delete ad    
+                        $scope.deleteAd();
+                    } else if (response.adData.data.length == '0') //delete adset and campaign
+                    {
+                        $scope.deleteAdSet();
+                    } else if (response.appStatus == '1') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        $scope.errorMessage = response.errorMessage;
+                        $scope.failure_deletedraft_campaign_show();
+
+                    }
+                    deferred.resolve(response);
+                } else // delete adset and ad campaign
+                {
+                    //console.log('error in getAdDetails');
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.failure_deletedraft_campaign_networkerror_show();
+                    deferred.reject("Something went wrong while processing your request. Please Contact Administrator.");
+                }
+            },
+                    function (response) {
+                        deferred.reject(response);
+                    });
+            return deferred.promise;
+
+        };
+
+        //    DELETE AD DETAILS
+        $scope.deleteAd = function () {
+            var deleteadheaders = {
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            };
+            var deferred = $q.defer();
+            querydeleteAd = '/deletead?userNetworkMapId=' + $rootScope.usernetworkMapId + '&adId=' + $rootScope.saveAdid;
+            apiService.thirdpartydelete(querydeleteAd, deleteadheaders).then(function (response) {
+                if (response) {
+                    if (response.appStatus == '0') {
+                        $scope.saveAddata();
+                    } else if (response.appStatus == '1') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        $scope.errorMessage = response.errorMessage;
+                        $scope.failure_deletedraft_campaign_show();
+                    }
+
+                    deferred.resolve(response);
+
+                } else {
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.failure_deletedraft_campaign_networkerror_show();
+                    deferred.reject("Something went wrong while processing your request. Please Contact Administrator.");
+                }
+            },
+                    function (response) {
+                        deferred.reject(response);
+                    });
+            return deferred.promise;
+
+        };
+
+        //SAVE AD DATA
+        $scope.saveAddata = function () {
+            var saveAdheaders = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            var deferred = $q.defer();
+            var parameters = {
+                "userId": $window.localStorage.getItem("userId"),
+                "accessToken": $window.localStorage.getItem("accessToken"),
+                "userNetworkMapId": $rootScope.usernetworkMapId,
+                "adId": $rootScope.saveAdid,
+                "adDetails": $rootScope.responsefromGetAd['0']
+            };
+            querysaveAd = '/saveaddata';
+            apiService.createthirdparty(querysaveAd, parameters, saveAdheaders).then(function (response) {
+                if (response) {
+                    if (response.appStatus == '0') {
+                        $scope.deleteAdSet();
+                    } else if (response.appStatus == '1') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        $scope.errorMessage = response.errorMessage;
+                        $scope.failure_deletedraft_campaign_show();
+                    }
+                    deferred.resolve(response);
+                } else {
+                    //console.log('error in saveAddata');
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.failure_deletedraft_campaign_networkerror_show();
+                    deferred.reject("Something went wrong while processing your request. Please Contact Administrator.");
+                }
+            },
+                    function (response) {
+                        deferred.reject(response);
+                    });
+            return deferred.promise;
+
+        };
+
+
+        //DELETE ADSET DETAILS
+        $scope.deleteAdSet = function () {
+            var deleteadSetheaders = {
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            };
+            var deferred = $q.defer();
+            querydeleteAdSet = '/deleteadset?networkMapId=' + $rootScope.usernetworkMapId + '&adsetId=' + $rootScope.saveadsetId;
+            apiService.thirdpartydelete(querydeleteAdSet, deleteadSetheaders).then(function (response) {
+                if (response) {
+                    if (response.appStatus == '0') {
+                        //console.log('deleteAdset success');
+                        //console.log(response);
+
+                        $scope.saveAdSetdata();
+                    } else if (response.appStatus == '1') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        $scope.errorMessage = response.errorMessage;
+                        $scope.failure_deletedraft_campaign_show();
+                    }
+                    deferred.resolve(response);
+
+                } else {
+                    //console.log('error in deleteAdSet');
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.failure_deletedraft_campaign_networkerror_show();
+                    deferred.reject("Something went wrong while processing your request. Please Contact Administrator.");
+                }
+            },
+                    function (response) {
+                        deferred.reject(response);
+                    });
+            return deferred.promise;
+
+        };
+
+
+        //SAVE ADSET DETAILS
+        $scope.saveAdSetdata = function () {
+            var saveAdSetdata = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            var deferred = $q.defer();
+            var parameters = {
+                "userId": $window.localStorage.getItem("userId"),
+                "accessToken": $window.localStorage.getItem("accessToken"),
+                "userNetworkMapId": $rootScope.usernetworkMapId,
+                "fbAdsetId": $rootScope.saveadsetId,
+                "fbAdsetDetails": $rootScope.responsefromGetAdSet['0']
+            };
+            querysaveAdSet = '/saveadsetdata';
+            apiService.createthirdparty(querysaveAdSet, parameters, saveAdSetdata).then(function (response) {
+                if (response) {
+                    if (response.appStatus == '0') {
+                        $scope.deleteCampaignDetails();
+                    } else if (response.appStatus == '1') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        $scope.errorMessage = response.errorMessage;
+                        $scope.failure_deletedraft_campaign_show();
+                    }
+                    deferred.resolve(response);
+                } else {
+                    //console.log('error in saveAdSetdata');
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.failure_deletedraft_campaign_networkerror_show();
+                    deferred.reject("Something went wrong while processing your request. Please Contact Administrator.");
+                }
+
+            },
+                    function (response) {
+                        deferred.reject(response);
+                    });
+            return deferred.promise;
+
+        };
+
+
+        //DELETE CAMPAIGN DETAILS
+        $scope.deleteCampaignDetails = function () {
+
+            var campaignId = $rootScope.campaignId;
+            var deleteCampaignDetails = {
+                headers: {
+                    'userId': $window.localStorage.getItem("userId"),
+                    'accessToken': $window.localStorage.getItem("accessToken")
+                }
+            };
+            var deferred = $q.defer();
+            querydeleteCampaignDetails = '/deleteaddcampaign?status=DELETED&userNetworkMapId=' + $rootScope.usernetworkMapId + '&campaignId=' + $rootScope.campaignId;
+            apiService.thirdpartydelete(querydeleteCampaignDetails, deleteCampaignDetails).then(function (response) {
+                if (response) {
+                    if (response.appStatus == '0') {
+                        $scope.saveCampaigndata();
+                    } else if (response.appStatus == '1') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        $scope.errorMessage = response.errorMessage;
+                        $scope.failure_deletedraft_campaign_show();
+                    }
+                    deferred.resolve(response);
+                } else {
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.failure_deletedraft_campaign_networkerror_show();
+                    deferred.reject("Something went wrong while processing your request. Please Contact Administrator.");
+                }
+            },
+                    function (response) {
+                        deferred.reject(response);
+                    });
+            return deferred.promise;
+
+        };
+
+        //SAVE CAMPAIGN DETAILS
+        $scope.saveCampaigndata = function () {
+            $rootScope.parentCampaignId = $window.localStorage.getItem("parentCampaignId")
+            var saveCampaigndata = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            var deferred = $q.defer();
+            var parameters = {
+                "userId": $window.localStorage.getItem("userId"),
+                "accessToken": $window.localStorage.getItem("accessToken"),
+                "userNetworkMapId": $rootScope.usernetworkMapId,
+                "parentCampaignId": $rootScope.parentCampaigId,
+                "adAccountId": $rootScope.accountId,
+                "campaignId": $rootScope.campaignId,
+                "campaignDetails": $rootScope.responsefromGetCampaignDetails
+
+            };
+            querysaveCampaignData = '/savecampaigndata';
+            apiService.createthirdparty(querysaveCampaignData, parameters, saveCampaigndata).then(function (response) {
+                if (response) {
+                    if (response.appStatus == '0') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+						if($scope.selectedNetwork=='All'){
+							//$scope.fetchChildCampaign($rootScope.parentCampaignId);
+							//$scope.fetchTwChildCampaign($rootScope.parentCampaignId);
+							$scope.fetchAllNetworkCampaigns($rootScope.parentCampaignId);
+						} else if($scope.selectedNetwork=='Facebook'){
+							$scope.fetchChildCampaign($rootScope.parentCampaignId);
+						} else if($scope.selectedNetwork=='Twitter'){
+							$scope.fetchTwChildCampaign($rootScope.parentCampaignId);
+						}
+						 
+						 
+						 
+                        $scope.failure_deletedraft_campaign = false;
+                        $scope.deleteDraft = false;
+                        $scope.show_delete_campaignsuccess();
+                    } else if (response.appStatus == '1') {
+                        $rootScope.progressLoader = "none";
+                        angular.element($('body').css("overflow-y", "scroll"))
+                        $scope.errorMessage = response.errorMessage;
+                        $scope.failure_deletedraft_campaign_show();
+                    }
+
+                    deferred.resolve(response);
+
+                } else {
+                    $rootScope.progressLoader = "none";
+                    angular.element($('body').css("overflow-y", "scroll"))
+                    $scope.failure_deletedraft_campaign_networkerror_show();
+                    deferred.reject("Something went wrong while processing your request. Please Contact Administrator.");
+                }
+            },
+                    function (response) {
+                        deferred.reject(response);
+                    });
+            return deferred.promise;
+
+        };
+
+
+
+        $scope.cancel_draftcampaign_delete = function () {
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.hide();
+            $scope.success_deletedraft_campaign = false;
+        };
+        $scope.show_delete_campaignsuccess = function () {
+            $scope.success_deletedraft_campaign = true;
+            $scope.failure_deletedraft_campaign_networkerror = false;
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.show();
+        };
+        $scope.failure_deletedraft_campaign_show = function () {
+            $scope.failure_deletedraft_campaign = true;
+            $scope.failure_deletedraft_campaign_networkerror = false;
+            $scope.deleteDraft = false;
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.show();
+
+        };
+        $scope.failure_deletedraft_campaign_networkerror_show = function () {
+            $scope.failure_deletedraft_campaign = false;
+            $scope.failure_deletedraft_campaign_networkerror = true;
+            $scope.deleteDraft = false;
+            var modalRejectReq = $(".account_modalApprove"); // Get the modal Approve req
+            modalRejectReq.show();
+        }
+
+
+    }
+]);

@@ -1,0 +1,453 @@
+[
+	{
+		"hiiy": {
+			"twCampaignId": "hiiy",
+			"twAdAccountId": "gq154f",
+			"modifiedOn": 1505476356000,
+			"modifiedBy": "advertiser@adtech.com",
+			"twFundingInstrumentId": "hxo9r",
+			"parentCampaignId": 5000630,
+			"twCampaignStatus": "PAUSED",
+			"createdOn": 1505473304000,
+			"twCampaignDetails": {
+				"servable": false,
+				"standard_delivery": true,
+				"paused": true,
+				"created_at": "2017-09-15T11:01:42Z",
+				"daily_budget_amount_local_micro": 10000,
+				"reasons_not_servable": [
+					"PAUSED_BY_ADVERTISER"
+				],
+				"start_time": "2017-09-14T23:52:33Z",
+				"account_id": "gq154f",
+				"deleted": false,
+				"updated_at": "2017-09-15T11:52:34Z",
+				"name": "Multipleaudience",
+				"funding_instrument_id": "hxo9r",
+				"currency": "USD",
+				"id": "hiiy",
+				"entity_status": "PAUSED"
+			}
+		}
+	},
+	{
+		"eeel": {
+			"twLineItemId": "eeel",
+			"twCampaignId": "hiiy",
+			"modifiedOn": 1505473619000,
+			"modifiedBy": "advertiser@adtech.com",
+			"twLineItemDetails": {
+				"tracking_tags": [],
+				"paused": true,
+				"automatically_select_bid": true,
+				"created_at": "2017-09-15T11:06:57Z",
+				"placements": [
+					"TWITTER_PROFILE",
+					"TWITTER_TIMELINE"
+				],
+				"creative_source": "MANUAL",
+				"bid_type": "AUTO",
+				"include_sentiment": "POSITIVE_ONLY",
+				"objective": "TWEET_ENGAGEMENTS",
+				"bid_unit": "ENGAGEMENT",
+				"charge_by": "ENGAGEMENT",
+				"advertiser_user_id": 745871769618219000,
+				"product_type": "PROMOTED_TWEETS",
+				"account_id": "gq154f",
+				"deleted": false,
+				"updated_at": "2017-09-15T11:06:57Z",
+				"optimization": "DEFAULT",
+				"name": "Untitled",
+				"currency": "USD",
+				"id": "eeel",
+				"categories": [],
+				"entity_status": "PAUSED",
+				"campaign_id": "hiiy"
+			},
+			"twLineItemStatus": "ACTIVE",
+			"createdOn": 1505473619000
+		}
+	},
+	[
+		{
+			"381ar": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": "3f14ce28dc7c4566",
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "LOCATION",
+					"name": "Australia",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381ar",
+					"location_type": "COUNTRY"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476358000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381ar"
+			}
+		},
+		{
+			"381as": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": "2509b9adc1fedfd2",
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "LOCATION",
+					"name": "Singapore",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381as",
+					"location_type": "COUNTRY"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476358000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381as"
+			}
+		},
+		{
+			"381at": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": "06ef846bfc783874",
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "LOCATION",
+					"name": "Japan",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381at",
+					"location_type": "COUNTRY"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476359000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381at"
+			}
+		},
+		{
+			"381au": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": "hi",
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "LANGUAGE",
+					"name": "Hindi",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381au"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476359000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381au"
+			}
+		},
+		{
+			"381av": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": "fr",
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "LANGUAGE",
+					"name": "French",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381av"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476359000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381av"
+			}
+		},
+		{
+			"381aw": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": "tr",
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "LANGUAGE",
+					"name": "Turkish",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381aw"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476359000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381aw"
+			}
+		},
+		{
+			"381ax": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": 1,
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "GENDER",
+					"name": "Male",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381ax"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476359000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381ax"
+			}
+		},
+		{
+			"381ay": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": 0,
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "PLATFORM",
+					"name": "iOS",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381ay"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476359000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381ay"
+			}
+		},
+		{
+			"381az": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": 1,
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "PLATFORM",
+					"name": "Android",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381az"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476359000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381az"
+			}
+		},
+		{
+			"381b0": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": 2,
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "PLATFORM",
+					"name": "BlackBerry phones and tablets",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381b0"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476359000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381b0"
+			}
+		},
+		{
+			"381b1": {
+				"twTargetingCriteriaDetails": {
+					"line_item_id": "eeel",
+					"account_id": "gq154f",
+					"deleted": false,
+					"targeting_value": 3,
+					"updated_at": "2017-09-15T11:07:01Z",
+					"targeting_type": "PLATFORM",
+					"name": "Mobile web on other devices",
+					"created_at": "2017-09-15T11:07:01Z",
+					"id": "381b1"
+				},
+				"twLineItemId": "eeel",
+				"twTargetingCriteriaStatus": "ACTIVE",
+				"modifiedOn": 1505476359000,
+				"modifiedBy": "advertiser@adtech.com",
+				"createdOn": 1505473644000,
+				"twTargetingCriteriaId": "381b1"
+			}
+		}
+	],
+	{
+		"locations": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": "3f14ce28dc7c4566",
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "LOCATION",
+			"name": "Australia",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381ar",
+			"location_type": "COUNTRY"
+		}
+	},
+	{
+		"locations": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": "2509b9adc1fedfd2",
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "LOCATION",
+			"name": "Singapore",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381as",
+			"location_type": "COUNTRY"
+		}
+	},
+	{
+		"locations": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": "06ef846bfc783874",
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "LOCATION",
+			"name": "Japan",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381at",
+			"location_type": "COUNTRY"
+		}
+	},
+	{
+		"language": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": "hi",
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "LANGUAGE",
+			"name": "Hindi",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381au"
+		}
+	},
+	{
+		"language": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": "fr",
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "LANGUAGE",
+			"name": "French",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381av"
+		}
+	},
+	{
+		"language": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": "tr",
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "LANGUAGE",
+			"name": "Turkish",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381aw"
+		}
+	},
+	{
+		"gender": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": 1,
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "GENDER",
+			"name": "Male",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381ax"
+		}
+	},
+	{
+		"device_platforms": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": 0,
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "PLATFORM",
+			"name": "iOS",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381ay"
+		}
+	},
+	{
+		"device_platforms": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": 1,
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "PLATFORM",
+			"name": "Android",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381az"
+		}
+	},
+	{
+		"device_platforms": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": 2,
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "PLATFORM",
+			"name": "BlackBerry phones and tablets",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381b0"
+		}
+	},
+	{
+		"device_platforms": {
+			"line_item_id": "eeel",
+			"account_id": "gq154f",
+			"deleted": false,
+			"targeting_value": 3,
+			"updated_at": "2017-09-15T11:07:01Z",
+			"targeting_type": "PLATFORM",
+			"name": "Mobile web on other devices",
+			"created_at": "2017-09-15T11:07:01Z",
+			"id": "381b1"
+		}
+	}
+]
